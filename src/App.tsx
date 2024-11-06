@@ -1,11 +1,24 @@
-import { Button } from './components/ui/button.tsx'
+import React from "react"
 
-function App() {
-  return (
-    <>
-      <Button>Click me</Button>
-    </>
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements
+} from "react-router-dom"
+
+import { Main } from "./pages"
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/">
+      <Route index element={<Main />} />
+    </Route>
   )
+)
+
+const App: React.FC = () => {
+  return <RouterProvider router={router} />
 }
 
 export default App
