@@ -1,3 +1,4 @@
 import Main from "./Main"
+import NotFound from "./NotFound"
 
-export { Main }
+export { Main, NotFound }
