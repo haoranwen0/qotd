@@ -1,3 +1,9 @@
+# Firebase
+functions/venv
+.firebase/hosting.*.cache
+src/firebaseConfig.ts
+functions/__pycache__
+
 # Logs
 logs
 *.log
