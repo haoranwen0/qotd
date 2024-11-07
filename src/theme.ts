@@ -11,39 +11,49 @@ const customConfig = defineConfig({
       colors: {
         background: {
           value: {
-            base: "#F8F7FF", // Soft white with slight purple undertone
-            _dark: "#1A1B25" // Deep blue-black
+            base: "#F6F4F1", // Soft white with slight purple undertone
+            _dark: "#385245" // Deep blue-black
+          }
+        },
+        primary: {
+          value: {
+            base: "#385245",
+            _dark: "#F6F4F1"
           }
         },
         text: {
           value: {
-            base: "#2D3047", // Deep blue-grey
-            _dark: "#E6E4F6" // Light purple-white
+            base: "#2A3E35", // Deep blue-grey
+            _dark: "#F6F4F1" // Light purple-white
           }
         },
         accent: {
           value: {
-            base: "#7765E3", // Soft purple
-            _dark: "#9D8FFF" // Bright purple
+            base: "#eb8787", // Soft purple
+            _dark: "#eb8787" // Bright purple
           }
         },
         secondary: {
           value: {
-            base: "#E6E4F6", // Light purple-white
-            _dark: "#2D2E3D" // Lighter background for cards
+            base: "#EBE8E5", // Light purple-white
+            _dark: "#2D4238" // Lighter background for cards
           }
         },
         muted: {
           value: {
-            base: "#6B6B7B", // Muted text
-            _dark: "#9998A8" // Muted text
+            base: "#9A958F",
+            _dark: "#B5B0AA"
           }
         }
       }
     },
     tokens: {
       fonts: {
-        heading: { value: "Inter, sans-serif" }
+        heading: { value: "'Roslindale Display'" },
+        body: {
+          value:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        }
       },
       fontSizes: {
         heading: {
@@ -58,7 +68,9 @@ const customConfig = defineConfig({
         }
       },
       spacing: {
-        sm: { value: "1rem" }
+        sm: { value: "1rem" },
+        md: { value: "1.5rem" },
+        lg: { value: "2rem" }
       }
     }
   },
