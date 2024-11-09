@@ -6,6 +6,7 @@ interface ResponseCtrl {
 interface UseMainResults {
   response: ResponseCtrl
   submit: () => void
+  currentDate: string
 }
 
 export type { UseMainResults }

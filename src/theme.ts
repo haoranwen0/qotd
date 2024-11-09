@@ -68,6 +68,7 @@ const customConfig = defineConfig({
         }
       },
       spacing: {
+        xs: { value: "0.5rem" },
         sm: { value: "1rem" },
         md: { value: "1.5rem" },
         lg: { value: "2rem" }
