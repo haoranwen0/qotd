@@ -6,7 +6,6 @@ import {
   Input,
   Box,
   IconButton,
-  Text,
   HStack
 } from "@chakra-ui/react"
 import { MdPerson } from "react-icons/md"
