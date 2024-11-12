@@ -14,7 +14,7 @@ import "./index.css"
 const app = initializeApp(firebaseConfig)
 getAnalytics(app)
 export const auth = getAuth(app)
-// connectAuthEmulator(auth, "http://localhost:9099")
+connectAuthEmulator(auth, "http://localhost:9099")
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

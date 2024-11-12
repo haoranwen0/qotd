@@ -25,7 +25,7 @@ import useAuthenticationDialog from "./hook"
 import { useAuthContext } from "../../contexts"
 
 const AuthenticationDialog: React.FC = () => {
-  const { user, loading } = useAuthContext()
+  const { user } = useAuthContext()
 
   const authenticationDialog = useAuthenticationDialog()
 
