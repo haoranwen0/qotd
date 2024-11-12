@@ -56,14 +56,14 @@ Reactions/reaction_id:
     answer_id: str
 """
 
-project_schema = {
-    "type": "object",
-    "properties": {
-        "name": {"type": "string"},
-        "code": {"type": "string"},
-        "framework": {"type": "string"},
-    },
-}
+# project_schema = {
+#     "type": "object",
+#     "properties": {
+#         "name": {"type": "string"},
+#         "code": {"type": "string"},
+#         "framework": {"type": "string"},
+#     },
+# }
 
 # def requires_auth(f):
 #   @wraps(f)
@@ -95,27 +95,17 @@ def router(request):
     # Define your routes with dynamic segments
     routes = [
         {
-            "pattern": r"^/projects$",
-            "methods": {"GET": list_projects, "POST": create_project},
+            "pattern": r"^/qotd$",
+            "methods": {"GET": get_qotd, "POST": answer_qotd},
         },
         {
-            "pattern": r"^/project/(?P<projectid>[^/]+)$",
+            "pattern": r"^/specific_answer/(?P<day>[^/]+)$",
             "methods": {
-                "GET": get_project,
-                "PUT": update_project,
-                "PATCH": update_code,
-                # "DELETE": delete_project
+                "GET": get_answer_for_user_specific_day,
             },
         },
-        {"pattern": r"^/chat/(?P<projectid>[^/]+)$", "methods": {"POST": chat}},
-        {
-            "pattern": r"^/history/(?P<projectid>[^/]+)$",
-            "methods": {"GET": get_chat_history},
-        },
-        {"pattern": r"^/usage$", "methods": {"GET": get_api_count}},
-        {"pattern": r"^/checkout$", "methods": {"POST": create_checkout_session}},
-        {"pattern": r"^/webhook$", "methods": {"POST": stripe_webhook_handler}},
-        {"pattern": r"^/test$", "methods": {"GET": get_test_user}},
+        {"pattern": r"^/days_answered$", "methods": {"GET": get_days_answered}},
+        {"pattern": r"^/test/(?P<uid>[^/]+)$", "methods": {"GET": get_test_user}},
         # {
         #   "pattern": r"^/api/products/(?P<product_id>\w+)$",
         #   "methods": {
@@ -150,6 +140,7 @@ def main(req: https_fn.Request) -> https_fn.Response:
 
 
 def get_qotd(req: https_fn.Request) -> https_fn.Response:
+    # format is: YYYY-MM-DD
     today = str(date.today())
     # year, month, day = today.year, today.month, today.day
     question_doc_ref = db.collection("questions").document(today)
@@ -157,12 +148,20 @@ def get_qotd(req: https_fn.Request) -> https_fn.Response:
     if not question_doc.exists:
         return https_fn.Response("Question not found", status=404)
     question = question_doc.get("question")
-    return https_fn.Response({"question": question, "day": today}, status=200, headers=get_headers())
+    return https_fn.Response(json.dumps({"question": question, "day": today}), status=200, headers=get_headers())
 
 
 def answer_qotd(req: https_fn.Request) -> https_fn.Response:
     answer = req.json["answer"]
     day = req.json["day"]
+
+    # Add to question answer_ids
+    question_doc_ref = db.collection("questions").document(day)
+    question_doc = question_doc_ref.get()
+    if not question_doc.exists:
+        return https_fn.Response("Question not found", status=404)
+    question_doc_ref.update({"answer_ids": firestore.ArrayUnion([answer_doc_ref.id])})
+
     # Add to answers
     _, answer_doc_ref = db.collection("answers").add({"answer": answer, "day": day})
     # If user is logged in then add to user's answer_ids and add user_id to answer
@@ -174,27 +173,36 @@ def answer_qotd(req: https_fn.Request) -> https_fn.Response:
         if not user_doc.exists:
             user_doc_ref.set({"day_to_answer_id": {day: answer_doc_ref.id}})
         else:
-            user_doc_ref.update({f"day_to_answer_id.{day}": answer_doc_ref.id})
+            user_doc_ref.update({f"day_to_answer_id.`{day}`": answer_doc_ref.id})
         # Add user_id to answer
         answer_doc_ref.update({"user_id": uid})
     except https_fn.HttpsError:
         pass
 
-    # Add to question answer_ids
-    question_doc_ref = db.collection("questions").document(day)
-    question_doc = question_doc_ref.get()
-    if not question_doc.exists:
-        return https_fn.Response("Question not found", status=404)
-    question_doc_ref.update({"answer_ids": firestore.ArrayUnion([answer_doc_ref.id])})
-
     return https_fn.Response(json.dumps({"message": "Answer submitted"}), status=200, headers=get_headers())
+
+
+def get_days_answered(req: https_fn.Request) -> https_fn.Response:
+    uid = get_uid(req.headers)
+    user_doc_ref = db.collection("users").document(uid)
+    user_doc = user_doc_ref.get()
+    try:
+        day_to_answer_id = user_doc.get("day_to_answer_id") or {}
+    except KeyError:
+        day_to_answer_id = {}
+    return https_fn.Response(json.dumps(list(day_to_answer_id.keys())), status=200, headers=get_headers())
 
 
 def get_answer_for_user_specific_day(req: https_fn.Request, day: str) -> https_fn.Response:
     uid = get_uid(req.headers)
     user_doc_ref = db.collection("users").document(uid)
     user_doc = user_doc_ref.get()
-    answer_id = user_doc.get(f"day_to_answer_id.{day}")
+    try:
+        answer_id = user_doc.get(f"day_to_answer_id.`{day}`")
+    except KeyError:
+        answer_id = None
+    if not answer_id:
+        return https_fn.Response("Answer not found", status=404)
     answer_doc_ref = db.collection("answers").document(answer_id)
     answer_doc = answer_doc_ref.get()
     return https_fn.Response(json.dumps({"answer": answer_doc.get("answer")}), status=200, headers=get_headers())
@@ -204,8 +212,13 @@ def get_all_answers_for_user(req: https_fn.Request) -> https_fn.Response:
     uid = get_uid(req.headers)
     user_doc_ref = db.collection("users").document(uid)
     user_doc = user_doc_ref.get()
+    
+    try:
+        day_to_answer_id = user_doc.get("day_to_answer_id") or {}
+    except KeyError:
+        day_to_answer_id = {}
     rtn = []
-    for answer_id in user_doc.get("day_to_answer_id", {}).values():
+    for answer_id in day_to_answer_id.values():
         answer_doc_ref = db.collection("answers").document(answer_id)
         answer_doc = answer_doc_ref.get()
         rtn.append({"day": answer_doc.get("day"), "answer": answer_doc.get("answer")})
@@ -236,7 +249,7 @@ def get_uid(header: Dict[str, str]) -> str:
         )
 
 
-def get_test_user(req: https_fn.Request) -> https_fn.Response:
+def get_test_user(req: https_fn.Request, uid: str) -> https_fn.Response:
     def create_custom_token(uid):
         try:
             return auth.create_custom_token(uid)
@@ -244,7 +257,6 @@ def get_test_user(req: https_fn.Request) -> https_fn.Response:
             print(f"Error creating custom token: {e}")
             return None
 
-    uid = req.json["uid"]
     # Generate a custom token
     custom_token = create_custom_token(uid).decode("utf-8")
 
