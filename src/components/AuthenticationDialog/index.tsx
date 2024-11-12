@@ -30,12 +30,8 @@ const AuthenticationDialog: React.FC = () => {
   const authenticationDialog = useAuthenticationDialog()
 
   useEffect(() => {
-    if (!loading) {
-      console.log(user)
-    }
-  }, [user])
-
-  if (loading) return <></>
+    console.log(user)
+  }, [])
 
   return (
     <Box pos="absolute" top="sm" right="sm">
