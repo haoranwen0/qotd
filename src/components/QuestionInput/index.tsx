@@ -18,6 +18,7 @@ const QuestionInput: React.FC<QuestionInputProps> = (props) => {
       }}
       value={props.response.value}
       onChange={(e) => props.response.update(e.target.value)}
+      name="response"
       autoFocus
       color="text"
       fontSize="body.primary"

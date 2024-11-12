@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import {
   Button,
@@ -23,9 +23,20 @@ import {
 } from "../ui/dialog"
 import { Field } from "../ui/field"
 import useAuthenticationDialog from "./hook"
+import { useAuthContext } from "../../contexts"
 
 const AuthenticationDialog: React.FC = () => {
+  const { user, loading } = useAuthContext()
+
   const authenticationDialog = useAuthenticationDialog()
+
+  useEffect(() => {
+    if (!loading) {
+      console.log(user)
+    }
+  }, [user])
+
+  if (loading) return <></>
 
   return (
     <Box pos="absolute" top="sm" right="sm">
@@ -53,7 +64,7 @@ const AuthenticationDialog: React.FC = () => {
             </DialogDescription>
 
             <Fieldset.Root size="sm" maxW="md">
-              <Fieldset.Content>
+              <Fieldset.Content gap="sm">
                 <Field label="Email">
                   <Input
                     value={authenticationDialog.form.value.email}
@@ -64,33 +75,53 @@ const AuthenticationDialog: React.FC = () => {
                     border="none"
                     bgColor="secondary"
                     outline="none"
+                    autoComplete="email"
                   />
                 </Field>
-                <Field label="Password">
-                  <Input
-                    value={authenticationDialog.form.value.password}
-                    onChange={authenticationDialog.form.update}
-                    name="password"
-                    type="password"
-                    variant="subtle"
-                    border="none"
-                    bgColor="secondary"
-                    outline="none"
-                  />
-                </Field>
+                {authenticationDialog.show.passwordField && (
+                  <Field label="Password">
+                    <Input
+                      value={authenticationDialog.form.value.password}
+                      onChange={authenticationDialog.form.update}
+                      name="password"
+                      type="password"
+                      variant="subtle"
+                      border="none"
+                      bgColor="secondary"
+                      outline="none"
+                    />
+                  </Field>
+                )}
                 <HStack
                   fontSize="sm"
                   color="muted"
-                  mt={2}
-                  mb={4}
-                  justifyContent="space-between"
+                  justifyContent={
+                    authenticationDialog.show.forgetPasswordRedirect
+                      ? "space-between"
+                      : "flex-end"
+                  }
                 >
-                  <Text>{authenticationDialog.texts.redirect}</Text>
+                  {authenticationDialog.show.forgetPasswordRedirect && (
+                    <Button
+                      variant="plain"
+                      fontSize="sm"
+                      color="muted"
+                      px={0}
+                      _hover={{ color: "accent" }}
+                      onClick={() =>
+                        authenticationDialog.formType.update("forgetPassword")
+                      }
+                    >
+                      Forgot password?
+                    </Button>
+                  )}
                   <Button
                     variant="plain"
-                    color="accent"
+                    color="muted"
                     fontSize="sm"
+                    px={0}
                     onClick={() => authenticationDialog.formType.redirect()}
+                    _hover={{ color: "accent" }}
                   >
                     {authenticationDialog.texts.redirectButton}
                   </Button>

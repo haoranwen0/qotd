@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 
-export type AuthenticationFormType = "signIn" | "signUp"
+export type AuthenticationFormType = "signIn" | "signUp" | "forgetPassword"
 
 export interface AuthenticationForm {
   email: string
@@ -21,13 +21,20 @@ export const AUTH_FORM_CONTENT = {
     description: "Enter your credentials to access your account.",
     button: "Sign In",
     redirect: "Don't have an account?",
-    redirectButton: "Sign up"
+    redirectButton: "Create an account"
   },
   signUp: {
     title: "Create an Account",
     description: "Fill out the form below to get started.",
     button: "Create Account",
     redirect: "Already have an account?",
+    redirectButton: "Sign in"
+  },
+  forgetPassword: {
+    title: "Reset Password",
+    description: "Enter your email below to reset your password.",
+    button: "Reset Password",
+    redirect: "Remember your password?",
     redirectButton: "Sign in"
   }
 } as const
@@ -53,6 +60,10 @@ export interface UseAuthenticationDialogResult {
     value: AuthenticationForm
     update: UpdateForm
     submit: SubmitForm
+  }
+  show: {
+    forgetPasswordRedirect: boolean
+    passwordField: boolean
   }
 }
 

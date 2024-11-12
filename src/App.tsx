@@ -7,6 +7,7 @@ import {
   createRoutesFromElements
 } from "react-router-dom"
 
+import { AuthProvider } from "./contexts"
 import { RootLayout } from "./layouts"
 import { Main, NotFound } from "./pages"
 
@@ -20,7 +21,11 @@ const router = createBrowserRouter(
 )
 
 const App: React.FC = () => {
-  return <RouterProvider router={router} />
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  )
 }
 
 export default App

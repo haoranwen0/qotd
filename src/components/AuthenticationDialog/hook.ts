@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react"
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   AuthError
 } from "firebase/auth"
 
@@ -36,17 +37,46 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
   }, [formType])
 
   const handleSubmit: SubmitForm = useCallback(async () => {
+    // Get form values
     const { email, password } = form
 
-    if (!email || !password) return
+    // Form validation
+    switch (formType) {
+      case "signIn":
+      case "signUp":
+        if (!email || !password) return
+        break
+      case "forgetPassword":
+        if (!email) return
+        break
+    }
 
+    // Submit form
     try {
       switch (formType) {
         case "signIn":
           await signInWithEmailAndPassword(auth, email, password)
+          toaster.create({
+            title: "Signed in successfully.",
+            type: "success",
+            duration: 3500
+          })
           break
         case "signUp":
           await createUserWithEmailAndPassword(auth, email, password)
+          toaster.create({
+            title: "Signed up successfully.",
+            type: "success",
+            duration: 3500
+          })
+          break
+        case "forgetPassword":
+          await sendPasswordResetEmail(auth, email)
+          toaster.create({
+            title: "Password reset email sent.",
+            type: "success",
+            duration: 3500
+          })
           break
         default:
           break
@@ -62,6 +92,16 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
     }
   }, [formType, form])
 
+  const showForgetPasswordRedirect = useMemo(
+    () => formType === "signIn",
+    [formType]
+  )
+
+  const showPasswordField = useMemo(
+    () => formType !== "forgetPassword",
+    [formType]
+  )
+
   return {
     texts,
     formType: {
@@ -73,6 +113,10 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
       value: form,
       update: updateForm,
       submit: handleSubmit
+    },
+    show: {
+      forgetPasswordRedirect: showForgetPasswordRedirect,
+      passwordField: showPasswordField
     }
   }
 }
