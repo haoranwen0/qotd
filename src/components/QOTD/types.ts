@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react"
+
 interface ResponseCtrl {
   value: string
   update: Dispatch<SetStateAction<string>>
@@ -9,4 +11,4 @@ interface UseMainResults {
   currentDate: string
 }
 
-export type { UseMainResults }
+export type { UseMainResults, ResponseCtrl }

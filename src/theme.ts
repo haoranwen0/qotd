@@ -44,16 +44,19 @@ const customConfig = defineConfig({
             base: "#9A958F",
             _dark: "#B5B0AA"
           }
+        },
+        "bg-hover": {
+          value: {
+            base: "#f4f4f5",
+            _dark: "#ffffff14"
+          }
         }
       }
     },
     tokens: {
       fonts: {
-        heading: { value: "'Roslindale Display'" },
-        body: {
-          value:
-            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-        }
+        heading: { value: "'Marcellus', serif" },
+        body: { value: "'Poppins', sans-serif" }
       },
       fontSizes: {
         heading: {
@@ -73,11 +76,6 @@ const customConfig = defineConfig({
         md: { value: "1.5rem" },
         lg: { value: "2rem" }
       }
-    }
-  },
-  globalCss: {
-    "html, body": {
-      fontFamily: "'Source Serif Pro', serif !important"
     }
   }
 })

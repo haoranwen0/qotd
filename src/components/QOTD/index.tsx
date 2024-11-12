@@ -32,7 +32,6 @@ const QOTD: React.FC = () => {
           <QuestionInput response={response} />
           <Button
             variant="plain"
-            fontFamily="body"
             color="text"
             onClick={submit}
             px={0}

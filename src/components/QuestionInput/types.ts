@@ -1,4 +1,4 @@
-import { ResponseCtrl } from "../../pages/Main/types"
+import { ResponseCtrl } from "../QOTD/types"
 
 interface QuestionInputProps {
   response: ResponseCtrl

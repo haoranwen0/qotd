@@ -6,13 +6,7 @@ import { Avatar } from "../ui/avatar"
 
 const Response: React.FC = () => {
   return (
-    <Card.Root
-      maxW="md"
-      mx="auto"
-      fontFamily="body"
-      variant="subtle"
-      bgColor="secondary"
-    >
+    <Card.Root maxW="md" mx="auto" variant="subtle" bgColor="secondary">
       <Card.Header>
         <HStack gap={3}>
           <Avatar variant="subtle" name="Anonymous Hippo" bgColor="accent" />
