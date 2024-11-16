@@ -28,7 +28,7 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
         </ChakraDialog.Positioner>
       </Portal>
     )
-  },
+  }
 )
 
 export const DialogCloseTrigger = forwardRef<

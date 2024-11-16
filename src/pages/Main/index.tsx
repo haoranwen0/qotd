@@ -1,12 +1,22 @@
 import React from "react"
 
-import { Grid, Heading } from "@chakra-ui/react"
+import { Flex } from "@chakra-ui/react"
+
+import {
+  Calendar,
+  BackgroundCurves,
+  QOTD,
+  AuthenticationDialog
+} from "../../components"
 
 const Main: React.FC = () => {
   return (
-    <Grid placeItems="center" height="100vh">
-      <Heading>Question Of The Day</Heading>
-    </Grid>
+    <Flex minH="100vh" bg="background" p={8} justifyContent="center">
+      <Calendar />
+      <BackgroundCurves />
+      <QOTD />
+      <AuthenticationDialog />
+    </Flex>
   )
 }
 
