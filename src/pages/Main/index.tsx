@@ -6,7 +6,7 @@ import {
   Calendar,
   BackgroundCurves,
   QOTD,
-  AuthenticationDialog
+  AuthenticationControl
 } from "../../components"
 
 const Main: React.FC = () => {
@@ -15,7 +15,7 @@ const Main: React.FC = () => {
       <Calendar />
       <BackgroundCurves />
       <QOTD />
-      <AuthenticationDialog />
+      <AuthenticationControl />
     </Flex>
   )
 }

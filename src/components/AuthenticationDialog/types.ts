@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react"
 
 export type AuthenticationFormType = "signIn" | "signUp" | "forgetPassword"
 
-export interface AuthenticationForm {
+export type AuthenticationForm = {
   email: string
   password: string
 }
@@ -43,6 +43,8 @@ export type UpdateForm = (e: React.ChangeEvent<HTMLInputElement>) => void
 
 export type SubmitForm = () => Promise<void>
 
+export type ResetForm = (resetFormType?: boolean) => void
+
 export interface UseAuthenticationDialogResult {
   texts: {
     title: string
@@ -58,8 +60,10 @@ export interface UseAuthenticationDialogResult {
   }
   form: {
     value: AuthenticationForm
+    errors: AuthenticationForm
     update: UpdateForm
     submit: SubmitForm
+    reset: ResetForm
   }
   show: {
     forgetPasswordRedirect: boolean

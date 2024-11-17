@@ -4,10 +4,10 @@ import Response from "./Response"
 import BackgroundCurves from "./BackgroundCurves"
 import ThemeToggle from "./ThemeToggle"
 import QOTD from "./QOTD"
-import AuthenticationDialog from "./AuthenticationDialog"
+import AuthenticationControl from "./AuthenticationContorl"
 
 export {
-  AuthenticationDialog,
+  AuthenticationControl,
   QuestionInput,
   Calendar,
   Response,
