@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import {
   createUserWithEmailAndPassword,
@@ -20,8 +20,11 @@ import {
 } from "./types"
 import { toaster } from "../ui/toaster"
 import { generateUsername } from "../../utils/utils"
+import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDialogContext"
 
 const useAuthenticationDialog: UseAuthenticationDialog = () => {
+  const { promptToSave } = useAuthenticationDialogContext()
+
   const [formType, setFormType] = useState<AuthenticationFormType>("signIn")
   const [errorMessages, setErrorMessages] = useState<AuthenticationForm>({
     email: "",
@@ -31,6 +34,12 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
     email: "",
     password: ""
   })
+
+  useEffect(() => {
+    if (promptToSave.value) {
+      setFormType("signUp")
+    }
+  }, [promptToSave.value])
 
   const texts = useMemo(() => AUTH_FORM_CONTENT[formType], [formType])
 

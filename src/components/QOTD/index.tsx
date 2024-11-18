@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Flex, Box, Heading, Button, Skeleton } from "@chakra-ui/react"
+import { Flex, Box, Heading, Button } from "@chakra-ui/react"
 
 import { QuestionInput } from ".."
 import { useQOTD } from "./hook"

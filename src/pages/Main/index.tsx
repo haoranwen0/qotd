@@ -2,6 +2,8 @@ import React from "react"
 
 import { Flex } from "@chakra-ui/react"
 
+import { AuthenticationDialogProvider } from "../../contexts/AuthenticationDialogContext"
+
 import {
   Calendar,
   BackgroundCurves,
@@ -14,8 +16,10 @@ const Main: React.FC = () => {
     <Flex minH="100vh" bg="background" p={8} justifyContent="center">
       <Calendar />
       <BackgroundCurves />
-      <QOTD />
-      <AuthenticationControl />
+      <AuthenticationDialogProvider>
+        <QOTD />
+        <AuthenticationControl />
+      </AuthenticationDialogProvider>
     </Flex>
   )
 }

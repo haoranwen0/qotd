@@ -1,83 +1,34 @@
-import React, { useState } from "react"
-import { Box, Text, Flex, Grid, IconButton, Card } from "@chakra-ui/react"
+import React from "react"
+
+import {
+  Box,
+  Text,
+  Flex,
+  Grid,
+  IconButton,
+  Card,
+  VStack
+} from "@chakra-ui/react"
 import {
   MdOutlineCalendarMonth,
   MdChevronLeft,
   MdChevronRight,
   MdOutlineCalendarToday
-  // MdOutlineCalendarViewMonth
 } from "react-icons/md"
 
-import { useColorModeValue } from "../ui/color-mode"
-import {
-  MenuContent,
-  MenuItem,
-  MenuItemCommand,
-  MenuRoot,
-  MenuTrigger
-} from "../ui/menu"
+import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu"
+import useCalendar from "./hook"
+import { monthNames, dayNames } from "../../utils/constants"
 
 const Calendar: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [showCalendar, setShowCalendar] = useState<boolean>(false)
-
-  // Calendar helper functions
-  const getDaysInMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-  }
-
-  const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-  }
-
-  // Navigation functions
-  const previousMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1)
-    )
-  }
-
-  const nextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1)
-    )
-  }
-
-  // Generate calendar data
-  const generateCalendar = () => {
-    const daysInMonth = getDaysInMonth(currentDate)
-    const firstDayOfMonth = getFirstDayOfMonth(currentDate)
-    const days = []
-
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(null)
-    }
-
-    // Add days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day)
-    }
-
-    return days
-  }
-
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ]
-
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const {
+    currentDate,
+    showCalendar,
+    previousMonth,
+    nextMonth,
+    generateCalendar,
+    daysAnswered
+  } = useCalendar()
 
   return (
     <Box pos="absolute" top="sm" left="sm">
@@ -86,8 +37,8 @@ const Calendar: React.FC = () => {
           <IconButton
             aria-label="Previous month"
             onClick={() => {
-              setShowCalendar((prevState) => !prevState)
-              setCurrentDate(new Date())
+              showCalendar.update((prevState) => !prevState)
+              currentDate.update(new Date())
             }}
             _hover={{ bgColor: "bg-hover" }}
             bgColor="transparent"
@@ -104,14 +55,14 @@ const Calendar: React.FC = () => {
             <Card.Header p={4}>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontSize="body.primary" fontWeight="bold">
-                  {monthNames[currentDate.getMonth()]}{" "}
-                  {currentDate.getFullYear()}
+                  {monthNames[currentDate.value.getMonth()]}{" "}
+                  {currentDate.value.getFullYear()}
                 </Text>
                 <Flex gap={1}>
                   <IconButton
                     aria-label="Go to today"
                     onClick={() => {
-                      setCurrentDate(new Date())
+                      currentDate.update(new Date())
                     }}
                     _hover={{ bgColor: "bg-hover" }}
                     size="sm"
@@ -163,21 +114,28 @@ const Calendar: React.FC = () => {
                 {generateCalendar().map((day, index) => {
                   const isToday =
                     day === new Date().getDate() &&
-                    currentDate.getMonth() === new Date().getMonth() &&
-                    currentDate.getFullYear() === new Date().getFullYear()
+                    currentDate.value.getMonth() === new Date().getMonth() &&
+                    currentDate.value.getFullYear() === new Date().getFullYear()
 
                   const isFuture =
                     new Date(
-                      currentDate.getFullYear(),
-                      currentDate.getMonth(),
+                      currentDate.value.getFullYear(),
+                      currentDate.value.getMonth(),
                       day as number
                     ) > new Date()
 
+                  const userHasAnsweredForDay = daysAnswered.has(
+                    `${currentDate.value.getFullYear()}-${
+                      currentDate.value.getMonth() + 1
+                    }-${day}`
+                  )
+
                   return (
-                    <Box
+                    <VStack
                       key={index}
                       textAlign="center"
                       p={2}
+                      gap={0}
                       aspectRatio="square"
                       cursor={day ? "pointer" : "default"}
                       borderRadius="md"
@@ -196,8 +154,11 @@ const Calendar: React.FC = () => {
                       }}
                       fontWeight={isToday ? "semibold" : "normal"}
                     >
-                      {day}
-                    </Box>
+                      <Text>{day}</Text>
+                      {userHasAnsweredForDay && (
+                        <Box h={1} w={1} bgColor="primary" rounded="full" />
+                      )}
+                    </VStack>
                   )
                 })}
               </Grid>

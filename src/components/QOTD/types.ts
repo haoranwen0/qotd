@@ -1,5 +1,10 @@
 import { Dispatch, SetStateAction } from "react"
 
+interface QOTD {
+  question: string
+  day: string
+}
+
 interface ResponseCtrl {
   value: string
   update: Dispatch<SetStateAction<string>>
@@ -13,4 +18,4 @@ interface UseMainResults {
   loading: boolean
 }
 
-export type { UseMainResults, ResponseCtrl }
+export type { UseMainResults, ResponseCtrl, QOTD }

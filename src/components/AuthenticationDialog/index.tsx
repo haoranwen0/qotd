@@ -15,8 +15,10 @@ import {
 } from "../ui/dialog"
 import { Field } from "../ui/field"
 import useAuthenticationDialog from "./hook"
+import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDialogContext"
 
 const AuthenticationDialog: React.FC = () => {
+  const { isOpen, promptToSave } = useAuthenticationDialogContext()
   const authenticationDialog = useAuthenticationDialog()
 
   return (
@@ -24,9 +26,19 @@ const AuthenticationDialog: React.FC = () => {
       placement="center"
       motionPreset="slide-in-bottom"
       size="sm"
+      open={isOpen.value}
+      onOpenChange={(openChangeDetails) =>
+        isOpen.update(openChangeDetails.open)
+      }
       onExitComplete={() => authenticationDialog.form.reset(true)}
     >
-      <DialogTrigger asChild>
+      <DialogTrigger
+        asChild
+        onClick={() => {
+          isOpen.update((prevState) => !prevState)
+          promptToSave.update(false)
+        }}
+      >
         <IconButton
           aria-label="Profile"
           _hover={{ bgColor: "bg-hover" }}
@@ -45,7 +57,8 @@ const AuthenticationDialog: React.FC = () => {
         </DialogHeader>
         <DialogBody>
           <DialogDescription mb={4}>
-            {authenticationDialog.texts.description}
+            {authenticationDialog.texts.description}{" "}
+            {promptToSave.value && "and save your entries"}
           </DialogDescription>
 
           <Fieldset.Root size="sm" maxW="md">

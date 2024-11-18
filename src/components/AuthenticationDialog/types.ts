@@ -18,14 +18,14 @@ export interface UseAuthenticationDialogParams {
 export const AUTH_FORM_CONTENT = {
   signIn: {
     title: "Welcome Back",
-    description: "Enter your credentials to access your account.",
+    description: "Enter your credentials to access your account",
     button: "Sign In",
     redirect: "Don't have an account?",
     redirectButton: "Create an account"
   },
   signUp: {
     title: "Create an Account",
-    description: "Fill out the form below to get started.",
+    description: "Fill out the form below to get started",
     button: "Create Account",
     redirect: "Already have an account?",
     redirectButton: "Sign in"
