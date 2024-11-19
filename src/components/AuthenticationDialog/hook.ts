@@ -23,7 +23,7 @@ import { generateUsername } from "../../utils/utils"
 import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDialogContext"
 
 const useAuthenticationDialog: UseAuthenticationDialog = () => {
-  const { promptToSave } = useAuthenticationDialogContext()
+  const { isOpen, promptToSave } = useAuthenticationDialogContext()
 
   const [formType, setFormType] = useState<AuthenticationFormType>("signIn")
   const [errorMessages, setErrorMessages] = useState<AuthenticationForm>({
@@ -35,6 +35,7 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
     password: ""
   })
 
+  // Set form type to signUp if promptToSave is true. This happens after user tries to submit and they're not already signed in.
   useEffect(() => {
     if (promptToSave.value) {
       setFormType("signUp")
@@ -133,6 +134,9 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
         type: "error",
         duration: 3500
       })
+    } finally {
+      resetForm()
+      isOpen.update(false)
     }
   }, [formType, form])
 

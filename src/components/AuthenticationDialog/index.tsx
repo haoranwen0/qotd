@@ -36,7 +36,6 @@ const AuthenticationDialog: React.FC = () => {
         asChild
         onClick={() => {
           isOpen.update((prevState) => !prevState)
-          promptToSave.update(false)
         }}
       >
         <IconButton

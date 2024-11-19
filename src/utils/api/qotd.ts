@@ -1,6 +1,6 @@
 import axios from "axios"
 
-import { ApiResponse } from "./types"
+import { AnswerQOTDResponse, ApiResponse } from "./types"
 import { QOTD } from "../../components/QOTD/types"
 
 export const getQOTD = async (): ApiResponse<QOTD> => {
@@ -18,9 +18,9 @@ export const answerQOTD = async (
   answer: string,
   day: string,
   authorizationToken?: string
-): ApiResponse<{ message: string }> => {
+): ApiResponse<AnswerQOTDResponse> => {
   try {
-    const response = await axios.post<{ message: string }>(
+    const response = await axios.post<AnswerQOTDResponse>(
       `${import.meta.env.VITE_DEV_API_URL}/qotd`,
       { answer, day },
       // If authorization token is provided, add it to the headers
