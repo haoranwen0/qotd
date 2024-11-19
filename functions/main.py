@@ -4,6 +4,7 @@
 
 import json
 import os
+import random
 import re
 import requests
 from datetime import date
@@ -42,8 +43,13 @@ Answers/answer_id:
     user_id: str
     comment_ids: list[str]
     reaction_ids: list[str]
+Thoughts/thought_id:
+    thought: str
+    day: str
+    user_id: str
 Users/user_id:
     day_to_answer_id: dict[day, answer_id]
+    day_to_thought_id: dict[day, thought_id]
     comment_ids: list[str]
     reaction_ids: list[str]
 Comments/comment_id:
@@ -99,12 +105,18 @@ def router(request):
             "methods": {"GET": get_qotd, "POST": answer_qotd},
         },
         {
+            "pattern": r"^/thought$",
+            "methods": {"PUT": update_thought},
+        },
+        {
             "pattern": r"^/specific_answer/(?P<day>[^/]+)$",
             "methods": {
                 "GET": get_answer_for_user_specific_day,
             },
         },
         {"pattern": r"^/days_answered$", "methods": {"GET": get_days_answered}},
+        {"pattern": r"^/answer_ids_for_question/(?P<day>[^/]+)$", "methods": {"GET": get_answer_ids_for_question}},
+        {"pattern": r"^/answers_for_answer_ids$", "methods": {"POST": get_answers_for_answer_ids}},
         {"pattern": r"^/test/(?P<uid>[^/]+)$", "methods": {"GET": get_test_user}},
         # {
         #   "pattern": r"^/api/products/(?P<product_id>\w+)$",
@@ -155,15 +167,17 @@ def answer_qotd(req: https_fn.Request) -> https_fn.Response:
     answer = req.json["answer"]
     day = req.json["day"]
 
-    # Add to question answer_ids
+    # Make sure question exists
     question_doc_ref = db.collection("questions").document(day)
     question_doc = question_doc_ref.get()
     if not question_doc.exists:
         return https_fn.Response("Question not found", status=404)
-    question_doc_ref.update({"answer_ids": firestore.ArrayUnion([answer_doc_ref.id])})
-
+    
     # Add to answers
     _, answer_doc_ref = db.collection("answers").add({"answer": answer, "day": day})
+    # Add to question answer_ids
+    question_doc_ref.update({"answer_ids": firestore.ArrayUnion([answer_doc_ref.id])})
+
     # If user is logged in then add to user's answer_ids and add user_id to answer
     try:
         uid = get_uid(req.headers)
@@ -179,7 +193,50 @@ def answer_qotd(req: https_fn.Request) -> https_fn.Response:
     except https_fn.HttpsError:
         pass
 
-    return https_fn.Response(json.dumps({"message": "Answer submitted"}), status=200, headers=get_headers())
+    return https_fn.Response(json.dumps({"answer_id": answer_doc_ref.id}), status=200, headers=get_headers())
+
+
+def update_thought(req: https_fn.Request) -> https_fn.Response:
+    # Need to be signed in to update thought
+    uid = get_uid(req.headers)
+
+    thought = req.json["thought"]
+    day = req.json["day"]
+    # Add to thoughts
+    _, thought_doc_ref = db.collection("thoughts").add({"thought": thought, "day": day, "user_id": uid})
+
+    # Add to user's thought_ids
+    user_doc_ref = db.collection("users").document(uid)
+    user_doc = user_doc_ref.get()
+    if not user_doc.exists:
+        user_doc_ref.set({"day_to_thought_id": {day: thought_doc_ref.id}})
+    else:
+        user_doc_ref.update({f"day_to_thought_id.`{day}`": thought_doc_ref.id})
+
+    return https_fn.Response(json.dumps({"thought_id": thought_doc_ref.id}), status=200, headers=get_headers())
+
+
+# This is only called when a user signs up immediately AFTER they have answered the QOTD
+def update_answer_after_signup(req: https_fn.Request) -> https_fn.Response:
+    answer_id = req.json["answer_id"]
+    answer_doc_ref = db.collection("answers").document(answer_id)
+    answer_doc = answer_doc_ref.get()
+    if not answer_doc.exists:
+        return https_fn.Response("Answer not found", status=404)
+    day = answer_doc.get("day")
+
+    uid = get_uid(req.headers)
+    # Add to user's answer_ids
+    user_doc_ref = db.collection("users").document(uid)
+    user_doc = user_doc_ref.get()
+    if not user_doc.exists:
+        user_doc_ref.set({"day_to_answer_id": {day: answer_doc_ref.id}})
+    else:
+        user_doc_ref.update({f"day_to_answer_id.`{day}`": answer_doc_ref.id})
+    # Add user_id to answer
+    answer_doc_ref.update({"user_id": uid})
+
+    return https_fn.Response(json.dumps({"message": "Answer data updated"}), status=200, headers=get_headers())
 
 
 def get_days_answered(req: https_fn.Request) -> https_fn.Response:
@@ -225,8 +282,28 @@ def get_all_answers_for_user(req: https_fn.Request) -> https_fn.Response:
     return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
 
 
-def get_answers_for_question(req: https_fn.Request, question_id: str) -> https_fn.Response:
-    pass
+# Get answer_ids for a specific question/day
+def get_answer_ids_for_question(req: https_fn.Request, day: str) -> https_fn.Response:
+    question_doc_ref = db.collection("questions").document(day)
+    question_doc = question_doc_ref.get()
+    if not question_doc.exists:
+        return https_fn.Response("Question not found", status=404)
+
+    answer_ids = question_doc.get("answer_ids")
+    num_samples = min(100, len(question_doc.get("answer_ids")))
+    rtn = random.sample(question_doc.get("answer_ids"), num_samples)
+    return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
+
+
+# Get actual answers corresponding to answer_ids
+def get_answers_for_answer_ids(req: https_fn.Request) -> https_fn.Response:
+    answer_ids = req.json["answer_ids"]
+    rtn = []
+    for answer_id in answer_ids:
+        answer_doc_ref = db.collection("answers").document(answer_id)
+        answer_doc = answer_doc_ref.get()
+        rtn.append({"day": answer_doc.get("day"), "answer": answer_doc.get("answer")})
+    return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
 
 
 def get_uid(header: Dict[str, str]) -> str:
