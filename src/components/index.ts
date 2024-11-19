@@ -1,4 +1,5 @@
 import QuestionInput from "./QuestionInput"
+import JournalInput from "./JournalInput"
 import Calendar from "./Calendar"
 import Response from "./Response"
 import BackgroundCurves from "./BackgroundCurves"
@@ -13,5 +14,6 @@ export {
   Response,
   BackgroundCurves,
   ThemeToggle,
-  QOTD
+  QOTD,
+  JournalInput
 }

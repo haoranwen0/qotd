@@ -2,7 +2,7 @@ import React from "react"
 
 import { Flex, Box, Heading, Button } from "@chakra-ui/react"
 
-import { QuestionInput } from ".."
+import { QuestionInput, JournalInput } from ".."
 import { useQOTD } from "./hook"
 
 const QOTD: React.FC = () => {
@@ -35,6 +35,43 @@ const QOTD: React.FC = () => {
               variant="plain"
               color="text"
               onClick={qotd.submit}
+              px={0}
+              alignSelf="flex-start"
+              textDecorationColor="transparent"
+              backgroundImage="linear-gradient(transparent 80%, var(--chakra-colors-accent) 80%)"
+              backgroundSize="80% 1.1em"
+              backgroundPosition="0 100%"
+              backgroundRepeat="no-repeat"
+              fontSize="lg"
+            >
+              Save
+            </Button>
+            <Heading
+              color="accent"
+              fontSize="heading.xl"
+              lineHeight="1.2"
+              fontWeight="medium"
+            >
+              Continue your thoughts
+            </Heading>
+            <JournalInput />
+            <Button
+              variant="plain"
+              color="text"
+              px={0}
+              alignSelf="flex-start"
+              textDecorationColor="transparent"
+              backgroundImage="linear-gradient(transparent 80%, var(--chakra-colors-accent) 80%)"
+              backgroundSize="80% 1.1em"
+              backgroundPosition="0 100%"
+              backgroundRepeat="no-repeat"
+              fontSize="lg"
+            >
+              See what the world thinks...
+            </Button>
+            <Button
+              variant="plain"
+              color="text"
               px={0}
               alignSelf="flex-start"
               textDecorationColor="transparent"

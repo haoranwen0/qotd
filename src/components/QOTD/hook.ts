@@ -154,8 +154,7 @@ export const useQOTD = (): UseMainResults => {
         if (cachedQOTD.day !== data.day) {
           setCachedQOTD({
             ...cachedQOTD,
-            day: data.day,
-            question: data.question
+            ...data
           })
         }
       }
