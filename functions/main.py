@@ -197,22 +197,31 @@ def answer_qotd(req: https_fn.Request) -> https_fn.Response:
 
 
 def update_thought(req: https_fn.Request) -> https_fn.Response:
-    # Need to be signed in to update thought
-    uid = get_uid(req.headers)
-
     thought = req.json["thought"]
     day = req.json["day"]
-    # Add to thoughts
-    _, thought_doc_ref = db.collection("thoughts").add({"thought": thought, "day": day, "user_id": uid})
 
-    # Add to user's thought_ids
+    # Need to be signed in to update thought
+    uid = get_uid(req.headers)
     user_doc_ref = db.collection("users").document(uid)
     user_doc = user_doc_ref.get()
-    if not user_doc.exists:
-        user_doc_ref.set({"day_to_thought_id": {day: thought_doc_ref.id}})
-    else:
-        user_doc_ref.update({f"day_to_thought_id.`{day}`": thought_doc_ref.id})
 
+    # Case 1: user doesn't exist yet
+    if not user_doc.exists:
+        _, thought_doc_ref = db.collection("thoughts").add({"thought": thought, "day": day, "user_id": uid})
+        user_doc_ref.set({f"day_to_thought_id.`{day}`": thought_doc_ref.id})
+        print("got through set")
+        return https_fn.Response(json.dumps({"thought_id": thought_doc_ref.id}), status=200, headers=get_headers())
+    # Case 2: user exists and already has a thought for this day
+    try:
+        thought_id = user_doc.get(f"day_to_thought_id.`{day}`")
+        print("got through get")
+        thought_doc_ref = db.collection("thoughts").document(thought_id)
+        thought_doc_ref.update({"thought": thought})
+    # Case 3: user exists but doesn't have a thought for this day yet
+    except KeyError:
+        _, thought_doc_ref = db.collection("thoughts").add({"thought": thought, "day": day, "user_id": uid})
+        user_doc_ref.update({f"day_to_thought_id.`{day}`": thought_doc_ref.id})
+        print("got through update")
     return https_fn.Response(json.dumps({"thought_id": thought_doc_ref.id}), status=200, headers=get_headers())
 
 
