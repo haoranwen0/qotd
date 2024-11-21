@@ -7,6 +7,7 @@ import os
 import random
 import re
 import requests
+from datetime import date, timedelta
 from typing import Dict
 
 from dotenv import load_dotenv
@@ -161,6 +162,12 @@ def get_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
 
 
 def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
+    yesterday = str(date.today() - timedelta(days=1))
+    today = str(date.today())
+    tomorrow = str(date.today() + timedelta(days=1))
+    if day not in (yesterday, today, tomorrow):
+        return https_fn.Response("Invalid day", status=400)
+
     answer = req.json["answer"]
 
     # Make sure question exists
