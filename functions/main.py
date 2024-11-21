@@ -100,7 +100,7 @@ def router(request):
     # Define your routes with dynamic segments
     routes = [
         {
-            "pattern": r"^/qotd$",
+            "pattern": r"^/qotd/(?P<day>[^/]+)$",
             "methods": {"GET": get_qotd, "POST": answer_qotd},
         },
         {
@@ -160,9 +160,8 @@ def get_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
     return https_fn.Response(json.dumps({"question": question, "day": day}), status=200, headers=get_headers())
 
 
-def answer_qotd(req: https_fn.Request) -> https_fn.Response:
+def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
     answer = req.json["answer"]
-    day = req.json["day"]
 
     # Make sure question exists
     question_doc_ref = db.collection("questions").document(day)
