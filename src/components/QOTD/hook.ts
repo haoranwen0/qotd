@@ -43,8 +43,12 @@ export const useQOTD = (): UseMainResults => {
   const [loading, setLoading] = useState(true)
 
   const userHasSubmittedResponse = useMemo(() => {
-    return cachedQOTD.answer_id !== ""
-  }, [cachedQOTD.answer_id])
+    return (
+      cachedQOTD.day === qotd.day &&
+      cachedQOTD.response !== "" &&
+      cachedQOTD.answer_id !== ""
+    )
+  }, [cachedQOTD, qotd.day])
 
   const debouncedSave = useCallback(
     _.debounce(async (currentValue: string) => {
@@ -102,7 +106,6 @@ export const useQOTD = (): UseMainResults => {
   }, [debouncedSave])
 
   useEffect(() => {
-    console.log("A change in thought detected", thought)
     if (thought.current !== thought.previous) {
       debouncedSave(thought.current)
     }
@@ -116,13 +119,6 @@ export const useQOTD = (): UseMainResults => {
       if (userObject) {
         authorizationToken = await userObject.getIdToken()
       }
-
-      console.log(
-        "Submitting answer...",
-        response,
-        qotd.day,
-        authorizationToken
-      )
 
       // Submit the answer to the backend
       const [error, data] = await answerQOTD(
@@ -180,19 +176,11 @@ export const useQOTD = (): UseMainResults => {
    * or null (depending on whether they authenticate or nor).
    */
   useEffect(() => {
-    console.log(
-      "Trying to submit answer...",
-      authenticationDialogIsOpen.value,
-      authenticationDialogPromptToSave.value
-    )
     void (async () => {
       if (
         authenticationDialogIsOpen.value !== true &&
         authenticationDialogPromptToSave.value === true
       ) {
-        console.log(
-          "Submitting answer after authentication dialog has been closed."
-        )
         await submitHelper(user)
       }
     })()
@@ -229,8 +217,9 @@ export const useQOTD = (): UseMainResults => {
         setQOTD(data)
         if (cachedQOTD.day !== data.day) {
           setCachedQOTD({
-            ...cachedQOTD,
-            ...data
+            ...data,
+            answer_id: "",
+            response: ""
           })
         } else {
           setResponse(cachedQOTD.response)

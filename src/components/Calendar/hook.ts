@@ -78,7 +78,6 @@ export default function useCalendar(): UseCalendarResults {
 
         // If there is valid data, set daysAnswered
         if (data !== null) {
-          console.log("Days answered:", data)
           setDaysAnswered(new Set(data))
         }
       }
