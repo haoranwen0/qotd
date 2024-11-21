@@ -70,7 +70,7 @@ const QOTD: React.FC = () => {
                 animation: "slide-to-left 0.2s ease-in-out"
               }}
               opacity={qotd.submitted ? 1 : 0}
-              h={qotd.submitted ? "fit-content" : "0"}
+              display={qotd.submitted ? "flex" : "none"}
               transition="opacity 0.2s ease-in-out"
             >
               <Button className="group" {...buttonStyle}>
@@ -82,7 +82,9 @@ const QOTD: React.FC = () => {
                   <RiArrowRightLine />
                 </Center>
               </Button>
-              <Heading>Continue your thoughts</Heading>
+              <Heading color="accent" fontSize="heading.md">
+                Continue your thoughts
+              </Heading>
               <Box pos="relative">
                 <JournalInput thought={qotd.thought} />
                 <Text

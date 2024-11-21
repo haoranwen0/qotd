@@ -13,7 +13,7 @@ const QuestionInput: React.FC<JournalInputProps> = (props) => {
 
   return (
     <StyledAutoResize
-      placeholder="Type your answer"
+      placeholder="Continue to journal your thoughts here..."
       _placeholder={{
         color: "muted"
       }}

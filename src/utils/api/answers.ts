@@ -1,5 +1,8 @@
 import axios from "axios"
-import { ApiResponse } from "./types"
+
+import { ApiResponse, GetAnswerForDayResponse } from "./types"
+import { getLocaleDate } from "../utils"
+import { Answer } from "../types"
 
 export const getDaysAnswered = async (
   authorizationToken: string
@@ -14,6 +17,27 @@ export const getDaysAnswered = async (
       }
     )
     return [null, response.data as string[]]
+  } catch (error) {
+    return [error as Error, null]
+  }
+}
+
+export const getAnswerForDay = async (
+  authorizationToken: string
+): ApiResponse<string> => {
+  try {
+    const response = await axios.get<GetAnswerForDayResponse>(
+      `${import.meta.env.VITE_DEV_API_URL}/specific_answer/${getLocaleDate()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authorizationToken}`
+        }
+      }
+    )
+
+    console.log("getAnswerForDay response: ", response)
+
+    return [null, response.data.answer]
   } catch (error) {
     return [error as Error, null]
   }
