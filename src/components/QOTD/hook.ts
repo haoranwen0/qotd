@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
+import { useParams } from "react-router-dom"
 import { User } from "firebase/auth"
 import { useLocalStorage } from "usehooks-ts"
 import _ from "lodash"
@@ -10,9 +11,11 @@ import { toaster } from "../ui/toaster"
 import { useAuthContext } from "../../contexts/AuthContext"
 import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDialogContext"
 import { updateThought } from "../../utils/api/thought"
-import { delay } from "../../utils/utils"
+import { getAnswerForDay } from "../../utils/api/answers"
+import { delay, getLocaleDate } from "../../utils/utils"
 
 export const useQOTD = (): UseMainResults => {
+  const { day: dayParam } = useParams()
   const { user } = useAuthContext()
   const {
     isOpen: authenticationDialogIsOpen,
@@ -42,13 +45,20 @@ export const useQOTD = (): UseMainResults => {
   })
   const [loading, setLoading] = useState(true)
 
+  const isToday = dayParam === undefined
+
   const userHasSubmittedResponse = useMemo(() => {
-    return (
-      cachedQOTD.day === qotd.day &&
-      cachedQOTD.response !== "" &&
-      cachedQOTD.answer_id !== ""
-    )
-  }, [cachedQOTD, qotd.day])
+    if (isToday) {
+      return (
+        cachedQOTD.day === qotd.day &&
+        cachedQOTD.response !== "" &&
+        cachedQOTD.answer_id !== ""
+      )
+    }
+
+    // Return true if not today. Assumes that the user only lands on /day/{some date} through the calendar on a date that they answered
+    return true
+  }, [cachedQOTD, qotd.day, isToday])
 
   const debouncedSave = useCallback(
     _.debounce(async (currentValue: string) => {
@@ -196,25 +206,30 @@ export const useQOTD = (): UseMainResults => {
     year: "numeric"
   })
 
-  // Get question of the day on mount
-  useEffect(() => {
-    void (async () => {
-      const [error, data] = await getQOTD()
+  const getQOTDHelper = useCallback(async () => {
+    let dayToGet = isToday ? getLocaleDate() : dayParam
 
-      setLoading(false)
+    console.log("Fetching question for day")
 
-      if (error) {
-        toaster.create({
-          title: "Error getting question of the day.",
-          description: error.message,
-          type: "error",
-          duration: 3500
-        })
-        return
-      }
+    const [error, data] = await getQOTD(dayToGet)
 
-      if (data !== null) {
-        setQOTD(data)
+    setLoading(false)
+
+    if (error) {
+      toaster.create({
+        title: `Error getting question ${
+          isToday ? "of today" : "for the day"
+        }.`,
+        description: error.message,
+        type: "error",
+        duration: 3500
+      })
+      return
+    }
+
+    if (data !== null) {
+      setQOTD(data)
+      if (isToday) {
         if (cachedQOTD.day !== data.day) {
           setCachedQOTD({
             ...data,
@@ -225,8 +240,52 @@ export const useQOTD = (): UseMainResults => {
           setResponse(cachedQOTD.response)
         }
       }
+    }
+  }, [cachedQOTD, isToday, dayParam])
+
+  const getAnswerForDayHelper = useCallback(async () => {
+    if (user === null) {
+      return
+    }
+
+    const authorizationToken = await user.getIdToken()
+
+    const [error, data] = await getAnswerForDay(authorizationToken)
+
+    if (error) {
+      toaster.create({
+        title: "Error getting answer for day",
+        description: error.message,
+        type: "error",
+        duration: 3500
+      })
+      return
+    }
+
+    console.log("Got answer for day", data)
+
+    // TODO
+    // Update states associated with the answer
+    if (data !== null) {
+      setResponse(data)
+    }
+  }, [cachedQOTD])
+
+  /*
+   * Get the question of the day
+   */
+  useEffect(() => {
+    void (async () => {
+      await getQOTDHelper()
+      if (!isToday) {
+        await getAnswerForDayHelper()
+      }
     })()
-  }, [])
+  }, [dayParam])
+
+  useEffect(() => {
+    console.log(response)
+  }, [response])
 
   return {
     response: {

@@ -15,12 +15,14 @@ import {
   MdChevronRight,
   MdOutlineCalendarToday
 } from "react-icons/md"
+import { useNavigate } from "react-router-dom"
 
 import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu"
 import useCalendar from "./hook"
 import { monthNames, dayNames } from "../../utils/constants"
 
 const Calendar: React.FC = () => {
+  const navigate = useNavigate()
   const {
     currentDate,
     showCalendar,
@@ -124,11 +126,11 @@ const Calendar: React.FC = () => {
                       day as number
                     ) > new Date()
 
-                  const userHasAnsweredForDay = daysAnswered.has(
-                    `${currentDate.value.getFullYear()}-${
-                      currentDate.value.getMonth() + 1
-                    }-${day}`
-                  )
+                  const date = `${currentDate.value.getFullYear()}-${
+                    currentDate.value.getMonth() + 1
+                  }-${day}`
+
+                  const userHasAnsweredForDay = daysAnswered.has(date)
 
                   return (
                     <VStack
@@ -153,6 +155,9 @@ const Calendar: React.FC = () => {
                         bg: day ? "bg-hover" : "transparent"
                       }}
                       fontWeight={isToday ? "semibold" : "normal"}
+                      onClick={() => {
+                        navigate(`/day/${date}`)
+                      }}
                     >
                       <Text>{day}</Text>
                       {userHasAnsweredForDay && (

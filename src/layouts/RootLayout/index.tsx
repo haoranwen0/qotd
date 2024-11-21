@@ -1,9 +1,16 @@
 import React from "react"
 
+import { Flex } from "@chakra-ui/react"
 import { Outlet } from "react-router-dom"
 
 import { Toaster } from "../../components/ui/toaster"
 import { useAuthContext } from "../../contexts"
+import {
+  Calendar,
+  BackgroundCurves,
+  AuthenticationControl
+} from "../../components"
+import { AuthenticationDialogProvider } from "../../contexts/AuthenticationDialogContext"
 
 const RootLayout: React.FC = () => {
   const { loading } = useAuthContext()
@@ -11,10 +18,15 @@ const RootLayout: React.FC = () => {
   if (loading) return <></>
 
   return (
-    <>
-      <Outlet />
+    <Flex minH="100vh" bg="background" p={8} justifyContent="center">
+      <Calendar />
+      <BackgroundCurves />
       <Toaster />
-    </>
+      <AuthenticationDialogProvider>
+        <Outlet />
+        <AuthenticationControl />
+      </AuthenticationDialogProvider>
+    </Flex>
   )
 }
 

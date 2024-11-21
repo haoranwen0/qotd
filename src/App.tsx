@@ -15,6 +15,9 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Main />} />
+      <Route path="day">
+        <Route path=":day" element={<Main />} />
+      </Route>
       <Route path="*" element={<NotFound />} />
     </Route>
   )

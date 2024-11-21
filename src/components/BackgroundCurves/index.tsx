@@ -2,11 +2,7 @@ import React from "react"
 
 import { Box } from "@chakra-ui/react"
 
-import { useColorModeValue } from "../ui/color-mode"
-
 const BackgroundCurves: React.FC = () => {
-  const curveColor = useColorModeValue("#D8D0CA", "#456354")
-
   return (
     <Box
       position="fixed"
