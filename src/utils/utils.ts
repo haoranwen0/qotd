@@ -85,10 +85,15 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+function getLocaleDate(): string {
+  return new Intl.DateTimeFormat("en-CA").format(new Date())
+}
+
 // Export for use in other modules
 export {
   delay,
   generateUsername,
+  getLocaleDate,
   type UsernameOptions,
   type Color,
   type Animal
