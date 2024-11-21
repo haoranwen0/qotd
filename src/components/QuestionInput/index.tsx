@@ -29,6 +29,7 @@ const QuestionInput: React.FC<QuestionInputProps> = (props) => {
       resize="none"
       overflow="hidden"
       css={styles}
+      disabled={props.disabled}
     />
   )
 }

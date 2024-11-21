@@ -3,9 +3,11 @@
 import { chakra, useRecipe } from "@chakra-ui/react"
 import AutoResize from "react-textarea-autosize"
 
+import { JournalInputProps } from "./types"
+
 const StyledAutoResize = chakra(AutoResize)
 
-const QuestionInput: React.FC = () => {
+const QuestionInput: React.FC<JournalInputProps> = (props) => {
   const recipe = useRecipe({ key: "textarea" })
   const styles = recipe({ size: "sm" })
 
@@ -14,6 +16,13 @@ const QuestionInput: React.FC = () => {
       placeholder="Type your answer"
       _placeholder={{
         color: "muted"
+      }}
+      value={props.thought.value.current}
+      onChange={(e) => {
+        props.thought.update((prevState) => ({
+          ...prevState,
+          current: e.target.value
+        }))
       }}
       name="response"
       autoFocus

@@ -76,5 +76,20 @@ function generateUsername(options: UsernameOptions = {}): string {
   return username
 }
 
+/**
+ * Creates a promise that resolves after a specified delay.
+ * @param ms The delay time in milliseconds.
+ * @returns A promise that resolves after the specified delay.
+ */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 // Export for use in other modules
-export { generateUsername, type UsernameOptions, type Color, type Animal }
+export {
+  delay,
+  generateUsername,
+  type UsernameOptions,
+  type Color,
+  type Animal
+}

@@ -38,21 +38,21 @@ const BackgroundCurves: React.FC = () => {
           stroke="#E8A4A4"
           strokeWidth="0.45"
           fill="none"
-          opacity={0.6}
+          opacity={0.2}
         />
         <path
           d="M0 55C20 35 35 65 50 45C65 25 80 55 100 35"
           stroke="#7FB5AA"
           strokeWidth="0.35"
           fill="none"
-          opacity={0.4}
+          opacity={0.2}
         />
         <path
           d="M0 65C20 45 35 75 50 55C65 35 80 65 100 45"
           stroke="#456354"
           strokeWidth="0.25"
           fill="none"
-          opacity={0.2}
+          opacity={0.15}
         />
         <path
           d="M0 75C20 55 35 85 50 65C65 45 80 75 100 55"

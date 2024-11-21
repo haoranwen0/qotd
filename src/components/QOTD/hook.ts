@@ -1,13 +1,16 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
+import { User } from "firebase/auth"
 import { useLocalStorage } from "usehooks-ts"
+import _ from "lodash"
 
-import { CachedQOTD, QOTD, UseMainResults } from "./types"
+import { CachedQOTD, QOTD, Thought, UseMainResults } from "./types"
 import { getQOTD, answerQOTD } from "../../utils/api/qotd"
 import { toaster } from "../ui/toaster"
 import { useAuthContext } from "../../contexts/AuthContext"
 import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDialogContext"
-import { User } from "firebase/auth"
+import { updateThought } from "../../utils/api/thought"
+import { delay } from "../../utils/utils"
 
 export const useQOTD = (): UseMainResults => {
   const { user } = useAuthContext()
@@ -32,7 +35,78 @@ export const useQOTD = (): UseMainResults => {
     day: ""
   })
   const [response, setResponse] = useState("")
+  const [thought, setThought] = useState<Thought>({
+    current: "",
+    previous: "",
+    isSaving: false
+  })
   const [loading, setLoading] = useState(true)
+
+  const userHasSubmittedResponse = useMemo(() => {
+    return cachedQOTD.answer_id !== ""
+  }, [cachedQOTD.answer_id])
+
+  const debouncedSave = useCallback(
+    _.debounce(async (currentValue: string) => {
+      // If the user is not logged in or there is not change in thought input, return
+      if (user === null) return
+      if (currentValue === thought.previous) return
+
+      // Get the user's authentication token and update the thought
+      const authorizationToken = await user.getIdToken()
+
+      const [error, _] = await updateThought(
+        authorizationToken,
+        currentValue,
+        qotd.day
+      )
+
+      // If there is an error, display error message
+      if (error) {
+        toaster.create({
+          title: "Error saving your thoughts.",
+          description: error.message,
+          type: "error",
+          duration: 3500
+        })
+        return
+      }
+
+      // If the update was successful, i.e. no error update the previous and current values for thought
+      console.log("successfully saved thought!")
+
+      // Set saving to true
+      setThought((prevState) => ({
+        ...prevState,
+        previous: currentValue,
+        isSaving: true
+      }))
+
+      // Shows the text "Saved!" for 2.5 seconds
+      await delay(2500)
+
+      // Set saving to false
+      setThought((prevState) => ({
+        ...prevState,
+        isSaving: false
+      }))
+    }, 2500),
+    [thought, user, qotd]
+  )
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSave.cancel()
+    }
+  }, [debouncedSave])
+
+  useEffect(() => {
+    console.log("A change in thought detected", thought)
+    if (thought.current !== thought.previous) {
+      debouncedSave(thought.current)
+    }
+  }, [thought, debouncedSave])
 
   const submitHelper = useCallback(
     async (userObject: User | null) => {
@@ -81,6 +155,25 @@ export const useQOTD = (): UseMainResults => {
     [qotd, response]
   )
 
+  const submit = useCallback(async () => {
+    // If the response is empty, display info message prompting user to answer the question
+    if (response.trim() === "") {
+      toaster.create({
+        title: "Please answer the question before submitting.",
+        type: "info",
+        duration: 3500
+      })
+      return
+    }
+
+    if (!user) {
+      authenticationDialogIsOpen.update(true)
+      authenticationDialogPromptToSave.update(true)
+    } else {
+      await submitHelper(user)
+    }
+  }, [response])
+
   /* If the authentication dialog is open and the prompt to save is true, submit the answer.
    * This happens when an authenticated user answers the question. The authentication dialog
    * pops up to prompt to them sign in / sign up. Then, submit the answer with either the uid
@@ -108,23 +201,6 @@ export const useQOTD = (): UseMainResults => {
     authenticationDialogPromptToSave.value,
     user
   ])
-
-  const submit = useCallback(async () => {
-    // If the response is empty, display info message prompting user to answer the question
-    if (response.trim() === "") {
-      toaster.create({
-        title: "Please answer the question before submitting.",
-        type: "info",
-        duration: 3500
-      })
-      return
-    }
-
-    if (!user) {
-      authenticationDialogIsOpen.update(true)
-      authenticationDialogPromptToSave.update(true)
-    }
-  }, [response])
 
   const currentDate = new Date().toLocaleDateString("en-US", {
     day: "numeric",
@@ -156,6 +232,8 @@ export const useQOTD = (): UseMainResults => {
             ...cachedQOTD,
             ...data
           })
+        } else {
+          setResponse(cachedQOTD.response)
         }
       }
     })()
@@ -166,8 +244,12 @@ export const useQOTD = (): UseMainResults => {
       value: response,
       update: setResponse
     },
+    thought: {
+      value: thought,
+      update: setThought
+    },
     submit,
-    submitted: cachedQOTD.response !== "",
+    submitted: userHasSubmittedResponse,
     currentDate,
     question: qotd.question,
     loading
