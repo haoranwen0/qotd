@@ -7,7 +7,6 @@ import os
 import random
 import re
 import requests
-from datetime import date
 from typing import Dict
 
 from dotenv import load_dotenv
@@ -151,16 +150,14 @@ def main(req: https_fn.Request) -> https_fn.Response:
     return router(req)
 
 
-def get_qotd(req: https_fn.Request) -> https_fn.Response:
-    # format is: YYYY-MM-DD
-    today = str(date.today())
-    # year, month, day = today.year, today.month, today.day
-    question_doc_ref = db.collection("questions").document(today)
+def get_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
+    # format for day is: YYYY-MM-DD
+    question_doc_ref = db.collection("questions").document(day)
     question_doc = question_doc_ref.get()
     if not question_doc.exists:
         return https_fn.Response("Question not found", status=404)
     question = question_doc.get("question")
-    return https_fn.Response(json.dumps({"question": question, "day": today}), status=200, headers=get_headers())
+    return https_fn.Response(json.dumps({"question": question, "day": day}), status=200, headers=get_headers())
 
 
 def answer_qotd(req: https_fn.Request) -> https_fn.Response:
@@ -299,8 +296,8 @@ def get_answer_ids_for_question(req: https_fn.Request, day: str) -> https_fn.Res
         return https_fn.Response("Question not found", status=404)
 
     answer_ids = question_doc.get("answer_ids")
-    num_samples = min(100, len(question_doc.get("answer_ids")))
-    rtn = random.sample(question_doc.get("answer_ids"), num_samples)
+    num_samples = min(100, len(answer_ids))
+    rtn = random.sample(answer_ids, num_samples)
     return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
 
 
