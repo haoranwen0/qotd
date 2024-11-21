@@ -105,8 +105,8 @@ def router(request):
             "methods": {"GET": get_qotd, "POST": answer_qotd},
         },
         {
-            "pattern": r"^/thought$",
-            "methods": {"PUT": update_thought},
+            "pattern": r"^/thought/(?P<day>[^/]+)$",
+            "methods": {"GET": get_thought, "PUT": update_thought},
         },
         {
             "pattern": r"^/specific_answer/(?P<day>[^/]+)$",
@@ -199,9 +199,26 @@ def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
     return https_fn.Response(json.dumps({"answer_id": answer_doc_ref.id}), status=200, headers=get_headers())
 
 
-def update_thought(req: https_fn.Request) -> https_fn.Response:
+def get_thought(req: https_fn.Request, day: str) -> https_fn.Response:
+    # format for day is: YYYY-MM-DD
+    uid = get_uid(req.headers)
+    user_doc_ref = db.collection("users").document(uid)
+    user_doc = user_doc_ref.get()
+
+    try:
+        thought_id = user_doc.get(f"day_to_thought_id.`{day}`")
+    except KeyError:
+        thought_id = None
+    if not thought_id:
+        return https_fn.Response("Thought not found", status=404)
+
+    thought_doc_ref = db.collection("thoughts").document(thought_id)
+    thought_doc = thought_doc_ref.get()
+    return https_fn.Response(json.dumps({"thought": thought_doc.get("thought")}), status=200, headers=get_headers())
+
+
+def update_thought(req: https_fn.Request, day: str) -> https_fn.Response:
     thought = req.json["thought"]
-    day = req.json["day"]
 
     # Need to be signed in to update thought
     uid = get_uid(req.headers)
