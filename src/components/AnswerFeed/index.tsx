@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React from "react"
 
 import {
   Flex,
@@ -28,8 +28,9 @@ const buttonStyle: ButtonProps = {
 }
 
 const AnswerFeed: React.FC = () => {
-  const { answers, currentAnswer, currentAnswerIndex, loading, hasMore } = useAnswerFeed()
+  const { answerIds, answers, currentAnswerIndex, showNextAnswer, loading, hasMore } = useAnswerFeed()
 
+  const currentAnswer = answers[currentAnswerIndex]
   if (answers.length === 0 || !currentAnswer) {
     return (
       <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center">
@@ -42,7 +43,7 @@ const AnswerFeed: React.FC = () => {
     <Flex maxW="md" flexDir="column">
       <Box w="full" color="text" h="full">
         <Heading fontSize="heading.md">
-          Answer {currentAnswerIndex + 1} of {allIds.length}
+          Answer {currentAnswerIndex + 1} of {answerIds.length}
         </Heading>
         <Flex
           gap={6}

@@ -4,15 +4,13 @@ import { useParams } from "react-router-dom"
 import { User } from "firebase/auth"
 import _ from "lodash"
 
-import { CachedQOTD, QOTD, Thought, UseMainResults } from "./types"
 import { getOtherAnswerIDs, getOtherAnswers } from "../../utils/api/viewOthers"
 import { toaster } from "../ui/toaster"
 import { useAuthContext } from "../../contexts/AuthContext"
-import { getAnswerForDay } from "../../utils/api/answers"
-import { delay, getLocaleDate } from "../../utils/utils"
+import { getLocaleDate } from "../../utils/utils"
+import { UseAnswerFeedResults } from "./types"
 
-export const useAnswerFeed = (): UseMainResults => {
-  const { day: dayParam } = useParams()
+export const useAnswerFeed = (): UseAnswerFeedResults => {
   const { user } = useAuthContext()
 
   const [answerIds, setAnswerIds] = React.useState<string[]>([])
@@ -27,9 +25,7 @@ export const useAnswerFeed = (): UseMainResults => {
     // if (user === null) {
     //   return
     // }
-
     // const authorizationToken = await user.getIdToken()
-
     const [error, data] = await getOtherAnswerIDs(getLocaleDate())
 
     if (error) {
@@ -55,9 +51,7 @@ export const useAnswerFeed = (): UseMainResults => {
     // if (user === null) {
     //   return
     // }
-
     // const authorizationToken = await user.getIdToken()
-
     const [error, data] = await getOtherAnswers(nextIds)
 
     if (error) {
@@ -114,36 +108,11 @@ export const useAnswerFeed = (): UseMainResults => {
     setCurrentAnswerIndex(prev => prev + 1)
   }
 
-  const currentAnswer = answers[currentAnswerIndex]
-
-  const isToday = dayParam === undefined
-
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  })
-
-  /*
-   * Get the question of the day
-   */
-  useEffect(() => {
-    void (async () => {
-      await getQOTDHelper()
-      if (!isToday) {
-        await getAnswerForDayHelper()
-      }
-    })()
-  }, [dayParam])
-
-  useEffect(() => {
-    console.log(response)
-  }, [response])
-
   return {
+    answerIds,
     answers,
-    currentAnswer
     currentAnswerIndex,
+    showNextAnswer,
     loading,
     hasMore
   }
