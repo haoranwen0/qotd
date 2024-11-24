@@ -60,18 +60,18 @@ const AnswerFeed: React.FC = () => {
             transition="opacity 0.2s ease-in-out"
             opacity={loading ? 0.7 : 1}
           >
-            <Heading
+            {/* <Heading
               color="accent"
               fontSize="heading.xl"
               lineHeight="1.2"
               fontWeight="medium"
             >
               {currentAnswer.author}
-            </Heading>
-            <Text mt={4}>{currentAnswer.content}</Text>
-            <Text color="muted" fontSize="sm" mt={2}>
+            </Heading> */}
+            <Text mt={4}>{currentAnswer}</Text>
+            {/* <Text color="muted" fontSize="sm" mt={2}>
               {currentAnswer.timestamp}
-            </Text>
+            </Text> */}
           </Box>
 
           {(currentAnswerIndex < answers.length - 1 || hasMore) && (
