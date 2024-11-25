@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { useParams } from "react-router-dom"
 import { User } from "firebase/auth"
@@ -11,13 +11,13 @@ import { getLocaleDate } from "../../utils/utils"
 import { UseAnswerFeedResults } from "./types"
 
 export const useAnswerFeed = (): UseAnswerFeedResults => {
-  const { user } = useAuthContext()
+  // const { user } = useAuthContext()
 
-  const [answerIds, setAnswerIds] = React.useState<string[]>([])
-  const [answers, setAnswers] = React.useState<string[]>([])
-  const [currentAnswerIndex, setCurrentAnswerIndex] = React.useState(0)
-  const [loading, setLoading] = React.useState(false)
-  const [hasMore, setHasMore] = React.useState(true)
+  const [answerIds, setAnswerIds] = useState<string[]>([])
+  const [answers, setAnswers] = useState<string[]>([])
+  const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
 
   const BATCH_SIZE = 5
 
@@ -97,12 +97,18 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
     }
   }
 
-  React.useEffect(() => {
-    loadNextBatch()
+  useEffect(() => {
+    getOtherAnswerIDsHelper()
   }, [])
 
+  useEffect(() => {
+    if (currentAnswerIndex === 0 && answerIds.length > 0) {
+      loadNextBatch()
+    }
+  }, [answerIds])
+
   const showNextAnswer = () => {
-    if (currentAnswerIndex === answers.length - 2 && hasMore) {
+    if (currentAnswerIndex === answerIds.length - 2 && hasMore) {
       loadNextBatch()
     }
     setCurrentAnswerIndex(prev => prev + 1)

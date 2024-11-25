@@ -26,9 +26,14 @@ export const getOtherAnswerIDs = async (day: string): ApiResponse<string[]> => {
  * @returns A Promise that resolves to an ApiResponse containing either the answers or an Error.
  */
 export const getOtherAnswers = async (answerIDs: string[]): ApiResponse<string[]> => {
+    console.log("Getting other answers", answerIDs)
+
     try {
-        const response = await axios.get<string[]>(
-            `${import.meta.env.VITE_DEV_API_URL}/answers_for_answer_ids/${answerIDs}`
+        const response = await axios.post<string[]>(
+            `${import.meta.env.VITE_DEV_API_URL}/answers_for_answer_ids`,
+            {
+                answer_ids: answerIDs
+            }
         )
         return [null, response.data]
     } catch (error) {
