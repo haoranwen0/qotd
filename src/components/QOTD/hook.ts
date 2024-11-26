@@ -15,6 +15,7 @@ import { getAnswerForDay } from "../../utils/api/answers"
 import { delay, getLocaleDate } from "../../utils/utils"
 
 export const useQOTD = (): UseMainResults => {
+  // Hooks
   const { day: dayParam } = useParams()
   const { user } = useAuthContext()
   const {
@@ -22,21 +23,13 @@ export const useQOTD = (): UseMainResults => {
     promptToSave: authenticationDialogPromptToSave
   } = useAuthenticationDialogContext()
 
+  // States
   const [cachedQOTD, setCachedQOTD] = useLocalStorage<CachedQOTD>(
     "cachedQOTD",
-    {
-      // Default value
-      day: "",
-      question: "",
-      response: "",
-      answer_id: ""
-    }
+    // Default value
+    { day: "", question: "", response: "", answer_id: "" }
   )
-
-  const [qotd, setQOTD] = useState<QOTD>({
-    question: "",
-    day: ""
-  })
+  const [qotd, setQOTD] = useState<QOTD>({ question: "", day: "" })
   const [response, setResponse] = useState("")
   const [thought, setThought] = useState<Thought>({
     current: "",
@@ -45,7 +38,9 @@ export const useQOTD = (): UseMainResults => {
   })
   const [loading, setLoading] = useState(true)
 
-  const isToday = dayParam === undefined
+  const isToday = useMemo(() => {
+    return dayParam === undefined
+  }, [dayParam])
 
   const userHasSubmittedResponse = useMemo(() => {
     if (isToday) {
@@ -96,8 +91,8 @@ export const useQOTD = (): UseMainResults => {
         isSaving: true
       }))
 
-      // Shows the text "Saved!" for 2.5 seconds
-      await delay(2500)
+      // Shows the text "Saved!" for 2 seconds
+      await delay(2000)
 
       // Set saving to false
       setThought((prevState) => ({
@@ -200,11 +195,13 @@ export const useQOTD = (): UseMainResults => {
     user
   ])
 
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  })
+  const currentDate = useMemo(() => {
+    return new Date().toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    })
+  }, [])
 
   const getQOTDHelper = useCallback(async () => {
     let dayToGet = isToday ? getLocaleDate() : dayParam
@@ -249,8 +246,12 @@ export const useQOTD = (): UseMainResults => {
     }
 
     const authorizationToken = await user.getIdToken()
+    const dayToGet = isToday ? getLocaleDate() : dayParam
 
-    const [error, data] = await getAnswerForDay(authorizationToken)
+    const [error, data] = await getAnswerForDay(
+      authorizationToken,
+      dayToGet as string
+    )
 
     if (error) {
       toaster.create({
@@ -277,9 +278,7 @@ export const useQOTD = (): UseMainResults => {
   useEffect(() => {
     void (async () => {
       await getQOTDHelper()
-      if (!isToday) {
-        await getAnswerForDayHelper()
-      }
+      await getAnswerForDayHelper()
     })()
   }, [dayParam])
 

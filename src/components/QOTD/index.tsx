@@ -7,7 +7,8 @@ import {
   Button,
   ButtonProps,
   Text,
-  Center
+  Center,
+  VStack
 } from "@chakra-ui/react"
 import { RiArrowRightLine } from "react-icons/ri"
 
@@ -54,11 +55,28 @@ const QOTD: React.FC = () => {
               {qotd.question}
             </Heading>
             <QuestionInput response={qotd.response} disabled={qotd.submitted} />
-            {!qotd.submitted && (
-              <Button {...buttonStyle} onClick={qotd.submit}>
-                Continue
+            <VStack alignItems="flex-start">
+              {!qotd.submitted && (
+                <Button {...buttonStyle} onClick={qotd.submit}>
+                  Continue
+                </Button>
+              )}
+              <Button
+                className="group"
+                variant="plain"
+                color="muted"
+                fontSize="body.secondary"
+                pl={0}
+              >
+                See what the world thinks...{" "}
+                <Center
+                  transition="transform 350ms ease-in-out"
+                  _groupHover={{ transform: "translateX(4px)" }}
+                >
+                  <RiArrowRightLine />
+                </Center>
               </Button>
-            )}
+            </VStack>
             <Flex
               flexDir="column"
               gap={6}
@@ -73,15 +91,6 @@ const QOTD: React.FC = () => {
               display={qotd.submitted ? "flex" : "none"}
               transition="opacity 0.2s ease-in-out"
             >
-              <Button className="group" {...buttonStyle}>
-                See what the world thinks...{" "}
-                <Center
-                  transition="transform 350ms ease-in-out"
-                  _groupHover={{ transform: "translateX(4px)" }}
-                >
-                  <RiArrowRightLine />
-                </Center>
-              </Button>
               <Heading color="accent" fontSize="heading.md">
                 Continue your thoughts
               </Heading>

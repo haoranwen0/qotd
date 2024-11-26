@@ -23,11 +23,12 @@ export const getDaysAnswered = async (
 }
 
 export const getAnswerForDay = async (
-  authorizationToken: string
+  authorizationToken: string,
+  day: string
 ): ApiResponse<string> => {
   try {
     const response = await axios.get<GetAnswerForDayResponse>(
-      `${import.meta.env.VITE_DEV_API_URL}/specific_answer/${getLocaleDate()}`,
+      `${import.meta.env.VITE_DEV_API_URL}/specific_answer/${day}`,
       {
         headers: {
           Authorization: `Bearer ${authorizationToken}`

@@ -134,14 +134,29 @@ const AuthenticationDialog: React.FC = () => {
               </HStack>
             </Fieldset.Content>
 
-            <Button
-              type="submit"
-              variant="subtle"
-              alignSelf="flex-start"
-              onClick={() => authenticationDialog.form.submit()}
-            >
-              {authenticationDialog.texts.button}
-            </Button>
+            <HStack w="full" justifyContent="space-between">
+              <Button
+                type="submit"
+                variant="subtle"
+                alignSelf="flex-start"
+                onClick={() => authenticationDialog.form.submit()}
+              >
+                {authenticationDialog.texts.button}
+              </Button>
+              {promptToSave.value && (
+                <Button
+                  variant="plain"
+                  px="0"
+                  onClick={() => {
+                    isOpen.update((prevState) => !prevState)
+                  }}
+                  _hover={{ color: "accent" }}
+                  transition="color 0.2s ease-in-out"
+                >
+                  Continue without account
+                </Button>
+              )}
+            </HStack>
           </Fieldset.Root>
         </DialogBody>
         <DialogCloseTrigger _hover={{ bgColor: "bg-hover" }} />
