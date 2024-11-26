@@ -331,7 +331,9 @@ def get_answers_for_answer_ids(req: https_fn.Request) -> https_fn.Response:
     for answer_id in answer_ids:
         answer_doc_ref = db.collection("answers").document(answer_id)
         answer_doc = answer_doc_ref.get()
-        rtn.append({"day": answer_doc.get("day"), "answer": answer_doc.get("answer")})
+        rtn.append(answer_doc.get("answer"))
+
+    print(f"Got answers for {answer_ids}: {rtn}")
     return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
 
 
