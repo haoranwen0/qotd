@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
+import { NavigateFunction } from "react-router-dom"
 
 interface QOTD {
   question: string
@@ -34,6 +35,7 @@ interface UseMainResults {
   submitted: boolean
   question: string
   loading: boolean
+  navigate: NavigateFunction
 }
 
 export type {
