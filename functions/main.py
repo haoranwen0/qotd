@@ -288,7 +288,7 @@ def get_answer_for_user_specific_day(req: https_fn.Request, day: str) -> https_f
     except KeyError:
         answer_id = None
     if not answer_id:
-        return https_fn.Response("Answer not found", status=404)
+        return https_fn.Response("Answer not found", status=404, headers=get_headers())
     answer_doc_ref = db.collection("answers").document(answer_id)
     answer_doc = answer_doc_ref.get()
     return https_fn.Response(json.dumps({"answer": answer_doc.get("answer")}), status=200, headers=get_headers())
@@ -316,7 +316,7 @@ def get_answer_ids_for_question(req: https_fn.Request, day: str) -> https_fn.Res
     question_doc_ref = db.collection("questions").document(day)
     question_doc = question_doc_ref.get()
     if not question_doc.exists:
-        return https_fn.Response("Question not found", status=404)
+        return https_fn.Response("Question not found", status=404, headers=get_headers())
 
     answer_ids = question_doc.get("answer_ids")
     num_samples = min(100, len(answer_ids))

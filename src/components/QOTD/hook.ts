@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { User } from "firebase/auth"
 import { useLocalStorage } from "usehooks-ts"
 import _ from "lodash"
@@ -16,6 +16,7 @@ import { delay, getLocaleDate } from "../../utils/utils"
 
 export const useQOTD = (): UseMainResults => {
   // Hooks
+  const navigate = useNavigate()
   const { day: dayParam } = useParams()
   const { user } = useAuthContext()
   const {
@@ -299,6 +300,7 @@ export const useQOTD = (): UseMainResults => {
     submitted: userHasSubmittedResponse,
     currentDate,
     question: qotd.question,
-    loading
+    loading,
+    navigate
   }
 }
