@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from "react"
 
+type UpdateResponse = (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+
 interface QOTD {
   question: string
   day: string
@@ -10,37 +12,19 @@ interface ResponseCtrl {
   update: Dispatch<SetStateAction<string>>
 }
 
-interface Thought {
-  current: string
-  previous: string
-  isSaving: boolean
-}
-
-interface ThoughtCtrl {
-  value: Thought
-  update: Dispatch<SetStateAction<Thought>>
-}
-
 interface CachedQOTD extends QOTD {
   response: string
   answer_id: string
 }
 
 interface UseMainResults {
-  response: ResponseCtrl
-  thought: ThoughtCtrl
-  submit: () => void
+  response: string
   currentDate: string
   submitted: boolean
-  question: string
   loading: boolean
+  value: QOTD
+  updateResponse: UpdateResponse
+  submit: () => void
 }
 
-export type {
-  UseMainResults,
-  ResponseCtrl,
-  ThoughtCtrl,
-  QOTD,
-  CachedQOTD,
-  Thought
-}
+export type { UseMainResults, ResponseCtrl, QOTD, CachedQOTD, UpdateResponse }

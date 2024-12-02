@@ -9,9 +9,11 @@ import { auth } from "../../main"
 import { useAuthContext } from "../../contexts"
 import { Avatar } from "../ui/avatar"
 import { MenuRoot } from "../ui/menu"
+import useJournal from "../../hooks/useJournal"
 
 const UserMenu: React.FC = () => {
   const { user } = useAuthContext()
+  const { setCachedThought, setCachedQOTD } = useJournal()
 
   return (
     <MenuRoot variant="subtle">
@@ -28,6 +30,13 @@ const UserMenu: React.FC = () => {
           value="logout"
           onClick={() => {
             signOut(auth)
+            setCachedThought("")
+            setCachedQOTD({
+              question: "",
+              day: "",
+              response: "",
+              answer_id: ""
+            })
           }}
           cursor="pointer"
         >

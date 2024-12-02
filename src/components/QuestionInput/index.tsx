@@ -1,5 +1,7 @@
 "use client"
 
+import { memo } from "react"
+
 import { chakra, useRecipe } from "@chakra-ui/react"
 import AutoResize from "react-textarea-autosize"
 import { QuestionInputProps } from "./types"
@@ -16,8 +18,8 @@ const QuestionInput: React.FC<QuestionInputProps> = (props) => {
       _placeholder={{
         color: "muted"
       }}
-      value={props.response.value}
-      onChange={(e) => props.response.update(e.target.value)}
+      value={props.response}
+      onChange={props.updateResponse}
       name="response"
       autoFocus
       color="text"
@@ -34,4 +36,4 @@ const QuestionInput: React.FC<QuestionInputProps> = (props) => {
   )
 }
 
-export default QuestionInput
+export default memo(QuestionInput)
