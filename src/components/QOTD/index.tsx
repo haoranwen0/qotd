@@ -70,6 +70,7 @@ const QOTD: React.FC = () => {
                 variant="plain"
                 fontSize="body.secondary"
                 pl={0}
+                onClick={() => qotd.navigate("/feed")}
               >
                 See what the world thinks...{" "}
                 <Center

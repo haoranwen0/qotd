@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
+import { NavigateFunction } from "react-router-dom"
 
 type UpdateResponse = (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 
@@ -25,6 +26,7 @@ interface UseMainResults {
   value: QOTD
   updateResponse: UpdateResponse
   submit: () => void
+  navigate: NavigateFunction
 }
 
 export type { UseMainResults, ResponseCtrl, QOTD, CachedQOTD, UpdateResponse }

@@ -1,5 +1,4 @@
-import React from "react"
-
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import {
   Flex,
   Box,
@@ -9,9 +8,19 @@ import {
   Text,
   Center
 } from "@chakra-ui/react"
+import { keyframes } from "@emotion/react"
 import { RiArrowRightLine } from "react-icons/ri"
 import { useAnswerFeed } from "./hook"
 
+const fadeOut = keyframes`
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-25px); }
+`
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+`
 
 const buttonStyle: ButtonProps = {
   variant: "plain",
@@ -29,81 +38,123 @@ const buttonStyle: ButtonProps = {
 
 const AnswerFeed: React.FC = () => {
   const { answerIds, answers, currentAnswerIndex, showNextAnswer, loading, hasMore } = useAnswerFeed()
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [displayedAnswer, setDisplayedAnswer] = useState("")
+  const [nextAnswer, setNextAnswer] = useState("")
 
   const currentAnswer = answers[currentAnswerIndex]
+
+  const answerBoxRef = useRef<HTMLDivElement>(null)
+  const getButtonHeight = useCallback(() => Math.max((answerBoxRef.current?.clientHeight || 0) + 8, 96), [answerBoxRef])
+
+  useEffect(() => {
+    if (currentAnswer) {
+      if (!displayedAnswer) {
+        setDisplayedAnswer(currentAnswer)
+      } else {
+        setIsTransitioning(true)
+        setNextAnswer(currentAnswer)
+
+        const timer = setTimeout(() => {
+          setDisplayedAnswer(currentAnswer)
+          setIsTransitioning(false)
+        }, 500)
+
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [currentAnswer])
+
   if (answers.length === 0 || !currentAnswer) {
     return (
-      <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center">
+      <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
         <Text color="text">Loading...</Text>
       </Flex>
     )
   }
 
   return (
-    <Flex maxW="md" flexDir="column">
+    <Flex maxW="md" flexDir="column" minH="400px" minW={["full", "md"]}>
       <Box w="full" color="text" h="full">
-        <Heading fontSize="heading.md">
-          Answer {currentAnswerIndex + 1} of {answerIds.length}
-        </Heading>
+        {/* Fixed-height header */}
+        <Box mb={6}>
+          <Heading fontSize="heading.md">
+            Answer {currentAnswerIndex + 1} of {answerIds.length}
+          </Heading>
+        </Box>
+
+        {/* Content area */}
         <Flex
           gap={6}
           flexDir="column"
           justifyContent="center"
-          h="full"
-          pb="lg"
           position="relative"
           zIndex={1}
+          mt={32}
         >
+          {/* Answer content */}
           <Box
-            data-state={loading ? "loading" : "idle"}
             position="relative"
-            transition="opacity 0.2s ease-in-out"
+            data-state={loading ? "loading" : "idle"}
             opacity={loading ? 0.7 : 1}
+            transition="opacity 0.2s ease-in-out"
+            w="full"
+            ref={answerBoxRef}
           >
-            {/* <Heading
-              color="accent"
-              fontSize="heading.xl"
-              lineHeight="1.2"
-              fontWeight="medium"
+            {/* Current answer */}
+            <Box
+              position={isTransitioning ? "absolute" : "relative"}
+              inset="0"
+              animation={isTransitioning ? `${fadeOut} 0.5s ease-out forwards` : undefined}
             >
-              {currentAnswer.author}
-            </Heading> */}
-            <Text mt={4}>{currentAnswer}</Text>
-            {/* <Text color="muted" fontSize="sm" mt={2}>
-              {currentAnswer.timestamp}
-            </Text> */}
+              <Text fontSize="3xl">{displayedAnswer}</Text>
+            </Box>
+
+            {/* Next answer */}
+            {isTransitioning && (
+              <Box
+                position="absolute"
+                inset="0"
+                animation={`${fadeIn} 0.5s ease-out forwards`}
+              >
+                <Text fontSize="3xl">{nextAnswer}</Text>
+              </Box>
+            )}
           </Box>
 
-          {(currentAnswerIndex < answers.length - 1 || hasMore) && (
-            <Button
-              className="group"
-              {...buttonStyle}
-              onClick={showNextAnswer}
-              disabled={loading && currentAnswerIndex === answers.length - 1}
-            >
-              Next answer{" "}
-              <Center
-                transition="transform 350ms ease-in-out"
-                _groupHover={{ transform: "translateX(4px)" }}
+          {/* Footer area */}
+          <Box position="absolute" top={`${getButtonHeight()}`} w="full">
+            {(currentAnswerIndex < answers.length - 1 || hasMore) && (
+              <Button
+                className="group"
+                {...buttonStyle}
+                onClick={showNextAnswer}
+                disabled={loading && currentAnswerIndex === answers.length - 1 || isTransitioning}
               >
-                <RiArrowRightLine />
-              </Center>
-            </Button>
-          )}
+                Next answer{" "}
+                <Center
+                  transition="transform 350ms ease-in-out"
+                  _groupHover={{ transform: "translateX(4px)" }}
+                >
+                  <RiArrowRightLine />
+                </Center>
+              </Button>
+            )}
 
-          {currentAnswerIndex === answers.length - 1 && !hasMore && (
-            <Text
-              color="muted"
-              fontSize="sm"
-              textAlign="center"
-              data-state="open"
-              _open={{
-                animation: "slide-from-left 0.2s ease-in-out"
-              }}
-            >
-              You've reached the end!
-            </Text>
-          )}
+            {currentAnswerIndex === answers.length - 1 && !hasMore && (
+              <Text
+                color="muted"
+                fontSize="sm"
+                textAlign="center"
+                data-state="open"
+                _open={{
+                  animation: "slide-from-left 0.2s ease-in-out"
+                }}
+              >
+                You've reached the end!
+              </Text>
+            )}
+          </Box>
         </Flex>
       </Box>
     </Flex>

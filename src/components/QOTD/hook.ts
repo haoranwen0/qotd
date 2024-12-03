@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { User } from "firebase/auth"
 import _ from "lodash"
 
@@ -15,6 +15,7 @@ import useJournal from "../../hooks/useJournal"
 
 export const useQOTD = (): UseMainResults => {
   // Hooks
+  const navigate = useNavigate()
   const { day: dayParam } = useParams()
   const { user } = useAuthContext()
   const {
@@ -225,6 +226,7 @@ export const useQOTD = (): UseMainResults => {
     submitted: userHasSubmittedResponse,
     currentDate,
     value: qotd,
-    loading
+    loading,
+    navigate
   }
 }
