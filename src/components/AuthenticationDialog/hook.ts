@@ -21,9 +21,11 @@ import {
 import { toaster } from "../ui/toaster"
 import { generateUsername } from "../../utils/utils"
 import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDialogContext"
+import useJournal from "../../hooks/useJournal"
 
 const useAuthenticationDialog: UseAuthenticationDialog = () => {
   const { isOpen, promptToSave } = useAuthenticationDialogContext()
+  const { handleJournalSubmission } = useJournal()
 
   const [formType, setFormType] = useState<AuthenticationFormType>("signIn")
   const [errorMessages, setErrorMessages] = useState<AuthenticationForm>({
@@ -125,6 +127,12 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
           break
         default:
           break
+      }
+
+      // Handle journal submission after user authenticates, and if they were previously unauthenticated and filled out information
+      if (['signUp', 'signIn'].includes(formType)) {
+        await handleJournalSubmission("qotd")
+        await handleJournalSubmission("thought")
       }
     } catch (error) {
       const firebaseError = error as AuthError

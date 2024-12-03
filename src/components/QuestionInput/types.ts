@@ -1,7 +1,8 @@
-import { ResponseCtrl } from "../QOTD/types"
+import { UpdateResponse } from "../QOTD/types"
 
 interface QuestionInputProps {
-  response: ResponseCtrl
+  response: string
+  updateResponse: UpdateResponse
   disabled?: boolean
 }
 

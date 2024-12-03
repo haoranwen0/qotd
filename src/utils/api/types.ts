@@ -1,5 +1,3 @@
-import { Answer } from "../types"
-
 export type ApiResponse<T> = Promise<[Error | null, null | T]>
 
 export interface AnswerQOTDResponse {
@@ -12,4 +10,8 @@ export interface UpdateThoughtResponse {
 
 export interface GetAnswerForDayResponse {
   answer: string
+}
+
+export interface GetThoughtResponse {
+  thought: string
 }

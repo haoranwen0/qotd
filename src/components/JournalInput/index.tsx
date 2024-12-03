@@ -7,7 +7,7 @@ import { JournalInputProps } from "./types"
 
 const StyledAutoResize = chakra(AutoResize)
 
-const QuestionInput: React.FC<JournalInputProps> = (props) => {
+const JournalInput: React.FC<JournalInputProps> = (props) => {
   const recipe = useRecipe({ key: "textarea" })
   const styles = recipe({ size: "sm" })
 
@@ -19,10 +19,13 @@ const QuestionInput: React.FC<JournalInputProps> = (props) => {
       }}
       value={props.thought.value.current}
       onChange={(e) => {
+        // Update the thought -> this will trigger the debounce to auto save
         props.thought.update((prevState) => ({
           ...prevState,
           current: e.target.value
         }))
+        // Update the cached thought -> in case the user is not authenticated
+        props.cachedThought.update(e.target.value)
       }}
       name="response"
       autoFocus
@@ -39,4 +42,4 @@ const QuestionInput: React.FC<JournalInputProps> = (props) => {
   )
 }
 
-export default QuestionInput
+export default JournalInput
