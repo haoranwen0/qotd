@@ -105,6 +105,10 @@ def router(request):
             "methods": {"GET": get_qotd, "POST": answer_qotd},
         },
         {
+            "pattern": r"^/tie_answer_to_user/(?P<day>[^/]+)$",
+            "methods": {"POST": tie_answer_to_user},
+        },
+        {
             "pattern": r"^/thought/(?P<day>[^/]+)$",
             "methods": {"GET": get_thought, "PUT": update_thought},
         },
@@ -166,7 +170,7 @@ def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
     today = str(date.today())
     tomorrow = str(date.today() + timedelta(days=1))
     if day not in (yesterday, today, tomorrow):
-        return https_fn.Response("Invalid day", status=400)
+        return https_fn.Response("Invalid day", status=400, headers=get_headers())
 
     answer = req.json["answer"]
 
@@ -197,6 +201,40 @@ def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
         pass
 
     return https_fn.Response(json.dumps({"answer_id": answer_doc_ref.id}), status=200, headers=get_headers())
+
+
+# This endpoint is called when a user signs up immediately after answering the QOTD
+def tie_answer_to_user(req: https_fn.Request, day: str):
+    uid = get_uid(req.headers)
+    answer_id = req.json["answer_id"]
+
+    # Make sure answer exists
+    answer_doc_ref = db.collection("answers").document(answer_id)
+    answer_doc = answer_doc_ref.get()
+    if not answer_doc.exists:
+        return https_fn.Response("Answer not found", status=404, headers=get_headers())
+    # Make sure answer belongs to this day
+    if answer_doc.get("day") != day:
+        return https_fn.Response("Answer does not belong to this day", status=400, headers=get_headers())
+    # Make sure answer doesn't already belong to a user
+    try:
+        answer_doc.get("user_id")
+        return https_fn.Response("Answer already belongs to a user", status=400, headers=get_headers())
+    except KeyError:
+        pass
+    
+    # Put user_id in answer doc
+    answer_doc_ref.update({"user_id": uid})
+
+    # Put answer_id in user's day_to_answer_id
+    user_doc_ref = db.collection("users").document(uid)
+    user_doc = user_doc_ref.get()
+    if not user_doc.exists:
+        user_doc_ref.set({"day_to_answer_id": {day: answer_doc_ref.id}})
+    else:
+        user_doc_ref.update({f"day_to_answer_id.`{day}`": answer_doc_ref.id})
+
+    return https_fn.Response(json.dumps({"message": "Answer tied to user"}), status=200, headers=get_headers())
 
 
 def get_thought(req: https_fn.Request, day: str) -> https_fn.Response:
