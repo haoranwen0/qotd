@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   AuthError,
-  updateProfile
+  updateProfile,
+  User
 } from "firebase/auth"
 
 import { auth } from "../../main"
@@ -91,11 +92,18 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
         break
     }
 
+    let userObject: User | null = null
+
     // Submit form
     try {
       switch (formType) {
         case "signIn":
-          await signInWithEmailAndPassword(auth, email, password)
+          let signInResult = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          )
+          userObject = signInResult.user
           toaster.create({
             title: "Signed in successfully.",
             type: "success",
@@ -104,13 +112,16 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
           break
         case "signUp":
           // Sign up user
-          const { user } = await createUserWithEmailAndPassword(
+          let signUpResult = await createUserWithEmailAndPassword(
             auth,
             email,
             password
           )
+          userObject = signUpResult.user
           // Update user profile with a random username
-          await updateProfile(user, { displayName: generateUsername() })
+          await updateProfile(signUpResult.user, {
+            displayName: generateUsername()
+          })
           toaster.create({
             title: "Signed up successfully.",
             type: "success",
@@ -129,10 +140,10 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
           break
       }
 
-      // Handle journal submission after user authenticates, and if they were previously unauthenticated and filled out information
-      if (['signUp', 'signIn'].includes(formType)) {
-        await handleJournalSubmission("qotd")
-        await handleJournalSubmission("thought")
+      // If user is signing in or signing up, submit journal entries
+      if (["signIn", "signUp"].includes(formType)) {
+        await handleJournalSubmission(userObject, "qotd")
+        await handleJournalSubmission(userObject, "thought")
       }
     } catch (error) {
       const firebaseError = error as AuthError

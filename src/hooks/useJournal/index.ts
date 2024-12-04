@@ -2,12 +2,12 @@ import { useCallback } from "react"
 
 import { useLocalStorage } from "usehooks-ts"
 
-import { HandleJournalSubmission, UseJournalResults } from "./types"
-import { useAuthContext } from "../../contexts/AuthContext"
 import { CachedQOTD } from "../../components/QOTD/types"
 import { toaster } from "../../components/ui/toaster"
-import { answerQOTD } from "../../utils/api/qotd"
+import { useAuthContext } from "../../contexts/AuthContext"
+import { tieAnswerToUser } from "../../utils/api/answers"
 import { updateThought } from "../../utils/api/thought"
+import { HandleJournalSubmission, UseJournalResults } from "./types"
 
 export default function useJournal(): UseJournalResults {
   const { user } = useAuthContext()
@@ -19,21 +19,20 @@ export default function useJournal(): UseJournalResults {
   )
 
   const handleJournalSubmission: HandleJournalSubmission = useCallback(
-    async (type) => {
-      if (user === null) {
+    async (userObject, type) => {
+      if (userObject === null) {
         return
       }
 
-      const authorizationToken = await user.getIdToken()
+      const authorizationToken = await userObject.getIdToken()
 
       let error: Error | null = null
       let data: any = null
 
       if (type === "qotd") {
-        ;[error, data] = await answerQOTD(
-          cachedQOTD.response,
-          cachedQOTD.day,
-          authorizationToken
+        ;[error, data] = await tieAnswerToUser(
+          authorizationToken,
+          cachedQOTD.answer_id
         )
       } else if (type === "thought") {
         ;[error, data] = await updateThought(

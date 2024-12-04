@@ -1,7 +1,13 @@
 import type { Dispatch, SetStateAction } from "react"
+
+import { User } from "firebase/auth"
+
 import { CachedQOTD } from "../../components/QOTD/types"
 
-type HandleJournalSubmission = (type: "qotd" | "thought") => Promise<void>
+type HandleJournalSubmission = (
+  userObject: User | null,
+  type: "qotd" | "thought"
+) => Promise<void>
 
 interface UseJournalResults {
   cachedQOTD: CachedQOTD

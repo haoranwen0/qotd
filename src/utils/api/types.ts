@@ -15,3 +15,7 @@ export interface GetAnswerForDayResponse {
 export interface GetThoughtResponse {
   thought: string
 }
+
+export interface TieAnswerToUserResponse {
+  message: string
+}
