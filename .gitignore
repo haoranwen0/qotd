@@ -1,5 +1,6 @@
 # Firebase
 functions/venv
+functions/emulator_data
 .firebase/hosting.*.cache
 src/firebaseConfig.ts
 functions/__pycache__
