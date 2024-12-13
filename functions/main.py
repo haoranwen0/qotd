@@ -204,7 +204,7 @@ def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
 
 
 # This endpoint is called when a user signs up immediately after answering the QOTD
-def tie_answer_to_user(req: https_fn.Request, day: str):
+def tie_answer_to_user(req: https_fn.Request, day: str) -> https_fn.Response:
     uid = get_uid(req.headers)
     answer_id = req.json["answer_id"]
 
@@ -326,10 +326,11 @@ def get_answer_for_user_specific_day(req: https_fn.Request, day: str) -> https_f
     except KeyError:
         answer_id = None
     if not answer_id:
-        return https_fn.Response("Answer not found", status=404, headers=get_headers())
+        # Instead of returning 404, return 200 with answer_id as None; easier to handle in frontend
+        return https_fn.Response(json.dumps({"answer_id": None, "answer": None}), status=200, headers=get_headers())
     answer_doc_ref = db.collection("answers").document(answer_id)
     answer_doc = answer_doc_ref.get()
-    return https_fn.Response(json.dumps({"answer": answer_doc.get("answer")}), status=200, headers=get_headers())
+    return https_fn.Response(json.dumps({"answer_id": answer_id, "answer": answer_doc.get("answer")}), status=200, headers=get_headers())
 
 
 def get_all_answers_for_user(req: https_fn.Request) -> https_fn.Response:
