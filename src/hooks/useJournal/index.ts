@@ -20,7 +20,15 @@ export default function useJournal(): UseJournalResults {
 
   const handleJournalSubmission: HandleJournalSubmission = useCallback(
     async (userObject, type) => {
-      if (userObject === null) {
+      // Don't submit under these conditions
+      // 1. User is not authenticated
+      // 2. User has not answered the QOTD (Missing answer_id)
+      // 3. User has not entered a thought
+      if (
+        userObject === null ||
+        cachedQOTD.answer_id === "" ||
+        cachedThought.trim() === ""
+      ) {
         return
       }
 

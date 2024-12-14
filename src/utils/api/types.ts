@@ -9,7 +9,8 @@ export interface UpdateThoughtResponse {
 }
 
 export interface GetAnswerForDayResponse {
-  answer: string
+  answer: string | null
+  answer_id: string | null
 }
 
 export interface GetThoughtResponse {

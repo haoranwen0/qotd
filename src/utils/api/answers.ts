@@ -6,7 +6,6 @@ import {
   TieAnswerToUserResponse
 } from "./types"
 import { getLocaleDate } from "../utils"
-import { Answer } from "../types"
 
 export const getDaysAnswered = async (
   authorizationToken: string
@@ -29,7 +28,7 @@ export const getDaysAnswered = async (
 export const getAnswerForDay = async (
   authorizationToken: string,
   day: string
-): ApiResponse<string> => {
+): ApiResponse<GetAnswerForDayResponse> => {
   try {
     const response = await axios.get<GetAnswerForDayResponse>(
       `${import.meta.env.VITE_DEV_API_URL}/specific_answer/${day}`,
@@ -40,9 +39,7 @@ export const getAnswerForDay = async (
       }
     )
 
-    console.log("getAnswerForDay response: ", response)
-
-    return [null, response.data.answer]
+    return [null, response.data]
   } catch (error) {
     return [error as Error, null]
   }

@@ -205,9 +205,20 @@ export const useQOTD = (): UseMainResults => {
 
     // Update states associated with the answer
     if (data !== null) {
-      setResponse(data)
+
+      if (data.answer !== null && data.answer_id !== null) {
+        // Update the response
+        setResponse(data.answer as string)
+
+        // Update the cached QOTD
+        setCachedQOTD((prevState) => ({
+          ...prevState,
+          response: data.answer as string,
+          answer_id: data.answer_id as string
+        }))
+      }
     }
-  }, [cachedQOTD])
+  }, [user, isToday, dayParam])
 
   /*
    * Get the question of the day
