@@ -37,7 +37,7 @@ const buttonStyle: ButtonProps = {
 }
 
 const AnswerFeed: React.FC = () => {
-  const { answerIds, answers, currentAnswerIndex, showNextAnswer, loading, hasMore } = useAnswerFeed()
+  const { answerIds, answers, currentAnswerIndex, showNextAnswer, hasDoneInitialFetch, loading, hasMore } = useAnswerFeed()
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [displayedAnswer, setDisplayedAnswer] = useState("")
   const [nextAnswer, setNextAnswer] = useState("")
@@ -65,10 +65,21 @@ const AnswerFeed: React.FC = () => {
     }
   }, [currentAnswer])
 
-  if (answers.length === 0 || !currentAnswer) {
+  if (!hasDoneInitialFetch) {
     return (
       <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
         <Text color="text">Loading...</Text>
+      </Flex>
+    )
+  }
+
+  if (answers.length === 0 || !currentAnswer) {
+    // Display "Nobody has answered" message
+    return (
+      <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
+        <Text fontSize="xl" color="muted">
+          Nobody has answered this question yet. Be the first!
+        </Text>
       </Flex>
     )
   }

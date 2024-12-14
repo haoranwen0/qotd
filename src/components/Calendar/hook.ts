@@ -4,8 +4,7 @@ import {
   PreviousMonth,
   NextMonth,
   GenerateCalendar,
-  UseCalendarResults,
-  DaysAnswered
+  UseCalendarResults
 } from "./types"
 import { getDaysAnswered } from "../../utils/api/answers"
 import { useAuthContext } from "../../contexts/AuthContext"

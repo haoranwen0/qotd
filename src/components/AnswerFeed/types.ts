@@ -4,7 +4,8 @@ interface UseAnswerFeedResults {
   currentAnswerIndex: number,
   showNextAnswer: () => void,
   loading: boolean,
-  hasMore: boolean
+  hasMore: boolean,
+  hasDoneInitialFetch: boolean
 }
 
 export type {

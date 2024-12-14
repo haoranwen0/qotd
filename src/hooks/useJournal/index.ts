@@ -35,19 +35,19 @@ export default function useJournal(): UseJournalResults {
       const authorizationToken = await userObject.getIdToken()
 
       let error: Error | null = null
-      let data: any = null
+      // let data: any = null
 
       if (type === "qotd") {
-        ;[error, data] = await tieAnswerToUser(
+        error = (await tieAnswerToUser(
           authorizationToken,
           cachedQOTD.answer_id
-        )
+        ))[0]
       } else if (type === "thought") {
-        ;[error, data] = await updateThought(
+        error = (await updateThought(
           authorizationToken,
           cachedThought,
           cachedQOTD.day
-        )
+        ))[0]
       }
 
       if (error !== null) {

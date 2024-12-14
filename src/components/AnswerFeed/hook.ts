@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
-import { useParams } from "react-router-dom"
-import { User } from "firebase/auth"
 import _ from "lodash"
 
 import { getOtherAnswerIDs, getOtherAnswers } from "../../utils/api/viewOthers"
 import { toaster } from "../ui/toaster"
-import { useAuthContext } from "../../contexts/AuthContext"
 import { getLocaleDate } from "../../utils/utils"
 import { UseAnswerFeedResults } from "./types"
 
@@ -16,6 +13,7 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
   const [answerIds, setAnswerIds] = useState<string[]>([])
   const [answers, setAnswers] = useState<string[]>([])
   const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0)
+  const [hasDoneInitialFetch, setHasDoneInitialFetch] = useState(false)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
@@ -108,6 +106,7 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
   useEffect(() => {
     if (currentAnswerIndex === 0 && answerIds.length > 0) {
       loadNextBatch()
+      setHasDoneInitialFetch(true)
     }
   }, [answerIds])
 
@@ -128,6 +127,7 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
     answers,
     currentAnswerIndex,
     showNextAnswer,
+    hasDoneInitialFetch,
     loading,
     hasMore
   }

@@ -121,6 +121,7 @@ def router(request):
         {"pattern": r"^/days_answered$", "methods": {"GET": get_days_answered}},
         {"pattern": r"^/answer_ids_for_question/(?P<day>[^/]+)$", "methods": {"GET": get_answer_ids_for_question}},
         {"pattern": r"^/answers_for_answer_ids$", "methods": {"POST": get_answers_for_answer_ids}},
+        {"pattern": r"^/populate_questions$", "methods": {"POST": populate_questions}},
         {"pattern": r"^/test/(?P<uid>[^/]+)$", "methods": {"GET": get_test_user}},
         # {
         #   "pattern": r"^/api/products/(?P<product_id>\w+)$",
@@ -394,6 +395,24 @@ def get_uid(header: Dict[str, str]) -> str:
         raise https_fn.HttpsError(
             https_fn.FunctionsErrorCode.UNAUTHENTICATED, "Unauthorized"
         )
+
+
+def populate_questions(req: https_fn.Request) -> https_fn.Response:
+    """
+    From frontend, send a json request in the format:
+    {
+        "questions": {
+            "2024-12-14": "What is the capital of France?",
+            "2024-12-15": "What is the capital of Germany?",
+            "2024-12-16": "What is the capital of Italy?",
+        }
+    }
+    """
+    questions = req.json["questions"]
+    for day, question in questions.items():
+        question_doc_ref = db.collection("questions").document(day)
+        question_doc_ref.set({"question": question, "day": day})
+    return https_fn.Response(json.dumps({"message": "Questions populated"}), status=200, headers=get_headers())
 
 
 def get_test_user(req: https_fn.Request, uid: str) -> https_fn.Response:
