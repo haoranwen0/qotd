@@ -27,6 +27,7 @@ const JournalInput: React.FC<JournalInputProps> = (props) => {
         // Update the cached thought -> in case the user is not authenticated
         props.cachedThought.update(e.target.value)
       }}
+      lineHeight="1.5"
       name="response"
       autoFocus
       color="text"

@@ -38,7 +38,7 @@ const QOTD: React.FC = () => {
         <Box w="full" color="text" h="full">
           <Heading fontSize="heading.md">{qotd.currentDate}</Heading>
           <Flex
-            gap={6}
+            gap={12}
             flexDir="column"
             justifyContent="center"
             h="full"
@@ -46,41 +46,44 @@ const QOTD: React.FC = () => {
             position="relative"
             zIndex={1}
           >
-            <Heading
-              color="accent"
-              fontSize="heading.xl"
-              lineHeight="1.2"
-              fontWeight="medium"
-            >
-              {qotd.value.question}
-            </Heading>
-            <QuestionInput
-              response={qotd.response}
-              disabled={qotd.submitted}
-              updateResponse={qotd.updateResponse}
-            />
-            <VStack alignItems="flex-start">
-              {!qotd.submitted && (
-                <Button {...buttonStyle} onClick={qotd.submit}>
-                  Continue
-                </Button>
-              )}
-              <Button
-                className="group"
-                variant="plain"
-                fontSize="body.secondary"
-                pl={0}
-                onClick={() => qotd.navigate("/feed")}
+            <Flex flexDir="column" alignItems="flex-start">
+              <Heading
+                color="accent"
+                fontSize="heading.xl"
+                lineHeight="1.2"
+                fontWeight="medium"
               >
-                See what the world thinks...{" "}
-                <Center
-                  transition="transform 350ms ease-in-out"
-                  _groupHover={{ transform: "translateX(4px)" }}
+                {qotd.value.question}
+              </Heading>
+              <QuestionInput
+                response={qotd.response}
+                disabled={qotd.submitted}
+                updateResponse={qotd.updateResponse}
+              />
+              <VStack alignItems="flex-start" gap={4}>
+                {!qotd.submitted && (
+                  <Button {...buttonStyle} onClick={qotd.submit}>
+                    Continue
+                  </Button>
+                )}
+                <Button
+                  className="group"
+                  variant="subtle"
+                  fontSize="body.secondary"
+                  bgColor="bg-hover"
+                  borderColor="bg-hover"
+                  onClick={() => qotd.navigate("/feed")}
                 >
-                  <RiArrowRightLine />
-                </Center>
-              </Button>
-            </VStack>
+                  See what the world thinks...{" "}
+                  <Center
+                    transition="transform 350ms ease-in-out"
+                    _groupHover={{ transform: "translateX(4px)" }}
+                  >
+                    <RiArrowRightLine />
+                  </Center>
+                </Button>
+              </VStack>
+            </Flex>
             <Thought qotdSubmitted={qotd.submitted} qotd={qotd.value} />
           </Flex>
         </Box>

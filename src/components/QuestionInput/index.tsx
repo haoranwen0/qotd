@@ -27,6 +27,7 @@ const QuestionInput: React.FC<QuestionInputProps> = (props) => {
       outline="none"
       border="none"
       padding="1rem 0"
+      lineHeight="1.5"
       minH="initial"
       resize="none"
       overflow="hidden"

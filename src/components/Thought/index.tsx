@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Flex, Heading, Box, Text } from "@chakra-ui/react"
+import { Flex, Heading, Box, Text, VStack } from "@chakra-ui/react"
 
 import JournalInput from "../JournalInput"
 import { ThoughtProps } from "./types"
@@ -12,7 +12,6 @@ const Thought: React.FC<ThoughtProps> = ({ qotdSubmitted, qotd }) => {
   return (
     <Flex
       flexDir="column"
-      gap={6}
       data-state={qotdSubmitted ? "open" : "closed"}
       _open={{
         animation: "slide-from-left 0.2s ease-in-out"

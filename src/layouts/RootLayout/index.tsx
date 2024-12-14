@@ -13,13 +13,13 @@ import {
 import { AuthenticationDialogProvider } from "../../contexts/AuthenticationDialogContext"
 
 const RootLayout: React.FC = () => {
-  const { loading } = useAuthContext()
+  const { loading, user } = useAuthContext()
 
   if (loading) return <></>
 
   return (
     <Flex minH="100vh" bg="background" p={8} justifyContent="center">
-      <Calendar />
+      {user !== null && <Calendar />}
       <BackgroundCurves />
       <Toaster />
       <AuthenticationDialogProvider>
