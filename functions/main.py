@@ -143,9 +143,9 @@ def router(request):
                 # Call the appropriate function with parameters
                 return route["methods"][method](request, **params)
             else:
-                return https_fn.Response("Method not allowed", status=405)
+                return https_fn.Response("Method not allowed", status=405, headers=get_headers())
 
-    return https_fn.Response("Not found", status=404)
+    return https_fn.Response("Not found", status=404, headers=get_headers())
 
 
 @https_fn.on_request()
@@ -161,7 +161,7 @@ def get_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
     question_doc_ref = db.collection("questions").document(day)
     question_doc = question_doc_ref.get()
     if not question_doc.exists:
-        return https_fn.Response("Question not found", status=404)
+        return https_fn.Response("Question not found", status=404, headers=get_headers())
     question = question_doc.get("question")
     return https_fn.Response(json.dumps({"question": question, "day": day}), status=200, headers=get_headers())
 
@@ -179,7 +179,7 @@ def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
     question_doc_ref = db.collection("questions").document(day)
     question_doc = question_doc_ref.get()
     if not question_doc.exists:
-        return https_fn.Response("Question not found", status=404)
+        return https_fn.Response("Question not found", status=404, headers=get_headers())
     
     # Add to answers
     _, answer_doc_ref = db.collection("answers").add({"answer": answer, "day": day})
@@ -249,7 +249,7 @@ def get_thought(req: https_fn.Request, day: str) -> https_fn.Response:
     except KeyError:
         thought_id = None
     if not thought_id:
-        return https_fn.Response("Thought not found", status=404)
+        return https_fn.Response("Thought not found", status=404, headers=get_headers())
 
     thought_doc_ref = db.collection("thoughts").document(thought_id)
     thought_doc = thought_doc_ref.get()
@@ -290,7 +290,7 @@ def update_answer_after_signup(req: https_fn.Request) -> https_fn.Response:
     answer_doc_ref = db.collection("answers").document(answer_id)
     answer_doc = answer_doc_ref.get()
     if not answer_doc.exists:
-        return https_fn.Response("Answer not found", status=404)
+        return https_fn.Response("Answer not found", status=404, headers=get_headers())
     day = answer_doc.get("day")
 
     uid = get_uid(req.headers)
