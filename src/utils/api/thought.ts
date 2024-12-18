@@ -10,7 +10,7 @@ export const updateThought = async (
 ): ApiResponse<UpdateThoughtResponse> => {
   try {
     const response = await axios.put<UpdateThoughtResponse>(
-      `${import.meta.env.VITE_DEV_API_URL}/thought/${day}`,
+      `${import.meta.env.VITE_API_URL}/thought/${day}`,
       {
         thought
       },
@@ -33,7 +33,7 @@ export const getThought = async (
 ): ApiResponse<GetThoughtResponse> => {
   try {
     const response = await axios.get<GetThoughtResponse>(
-      `${import.meta.env.VITE_DEV_API_URL}/thought/${day}`,
+      `${import.meta.env.VITE_API_URL}/thought/${day}`,
       {
         headers: {
           Authorization: `Bearer ${authorizationToken}`

@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Flex, Heading, Box, Text, VStack } from "@chakra-ui/react"
+import { Flex, Heading, Box, Text } from "@chakra-ui/react"
 
 import JournalInput from "../JournalInput"
 import { ThoughtProps } from "./types"

@@ -34,7 +34,7 @@ dist-ssr
 
 /functions/venv
 
-.env
+.env*
 
 # dependencies
 /node_modules

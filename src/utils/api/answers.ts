@@ -12,7 +12,7 @@ export const getDaysAnswered = async (
 ): ApiResponse<string[]> => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_DEV_API_URL}/days_answered`,
+      `${import.meta.env.VITE_API_URL}/days_answered`,
       {
         headers: {
           Authorization: `Bearer ${authorizationToken}`
@@ -31,7 +31,7 @@ export const getAnswerForDay = async (
 ): ApiResponse<GetAnswerForDayResponse> => {
   try {
     const response = await axios.get<GetAnswerForDayResponse>(
-      `${import.meta.env.VITE_DEV_API_URL}/specific_answer/${day}`,
+      `${import.meta.env.VITE_API_URL}/specific_answer/${day}`,
       {
         headers: {
           Authorization: `Bearer ${authorizationToken}`
@@ -53,7 +53,7 @@ export const tieAnswerToUser = async (
 
   try {
     const response = await axios.post<TieAnswerToUserResponse>(
-      `${import.meta.env.VITE_DEV_API_URL}/tie_answer_to_user/${day}`,
+      `${import.meta.env.VITE_API_URL}/tie_answer_to_user/${day}`,
       { answer_id: answerId },
       { headers: { Authorization: `Bearer ${authorizationToken}` } }
     )

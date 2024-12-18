@@ -11,7 +11,7 @@ import { ApiResponse } from "./types"
 export const getOtherAnswerIDs = async (day: string): ApiResponse<string[]> => {
     try {
         const response = await axios.get<string[]>(
-            `${import.meta.env.VITE_DEV_API_URL}/answer_ids_for_question/${day}`
+            `${import.meta.env.VITE_API_URL}/answer_ids_for_question/${day}`
         )
         return [null, response.data]
     } catch (error) {
@@ -30,7 +30,7 @@ export const getOtherAnswers = async (answerIDs: string[]): ApiResponse<string[]
 
     try {
         const response = await axios.post<string[]>(
-            `${import.meta.env.VITE_DEV_API_URL}/answers_for_answer_ids`,
+            `${import.meta.env.VITE_API_URL}/answers_for_answer_ids`,
             {
                 answer_ids: answerIDs
             }

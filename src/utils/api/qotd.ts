@@ -19,7 +19,7 @@ export const getQOTD = async (day?: string): ApiResponse<QOTD> => {
 
   try {
     const response = await axios.get<QOTD>(
-      `${import.meta.env.VITE_DEV_API_URL}/qotd/${dayToGet}`
+      `${import.meta.env.VITE_API_URL}/qotd/${dayToGet}`
     )
     return [null, response.data]
   } catch (error) {
@@ -42,7 +42,7 @@ export const answerQOTD = async (
 ): ApiResponse<AnswerQOTDResponse> => {
   try {
     const response = await axios.post<AnswerQOTDResponse>(
-      `${import.meta.env.VITE_DEV_API_URL}/qotd/${getLocaleDate()}`,
+      `${import.meta.env.VITE_API_URL}/qotd/${getLocaleDate()}`,
       { answer, day },
       // If authorization token is provided, add it to the headers
       {
