@@ -9,9 +9,11 @@ import UserMenu from "../UserMenu"
 const AuthenticationControl: React.FC = () => {
   const { user } = useAuthContext()
 
+  const validUser = user !== null && user.emailVerified
+
   return (
     <Box pos="absolute" top="sm" right="sm">
-      {user ? <UserMenu /> : <AuthenticationDialog />}
+      {validUser ? <UserMenu /> : <AuthenticationDialog />}
     </Box>
   )
 }

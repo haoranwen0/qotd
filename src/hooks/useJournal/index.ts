@@ -4,14 +4,11 @@ import { useLocalStorage } from "usehooks-ts"
 
 import { CachedQOTD } from "../../components/QOTD/types"
 import { toaster } from "../../components/ui/toaster"
-import { useAuthContext } from "../../contexts/AuthContext"
 import { tieAnswerToUser } from "../../utils/api/answers"
 import { updateThought } from "../../utils/api/thought"
 import { HandleJournalSubmission, UseJournalResults } from "./types"
 
 export default function useJournal(): UseJournalResults {
-  const { user } = useAuthContext()
-
   const [cachedThought, setCachedThought] = useLocalStorage("cachedThought", "")
   const [cachedQOTD, setCachedQOTD] = useLocalStorage<CachedQOTD>(
     "cachedQOTD",
@@ -26,8 +23,8 @@ export default function useJournal(): UseJournalResults {
       // 3. User has not entered a thought
       if (
         userObject === null ||
-        cachedQOTD.answer_id === "" ||
-        cachedThought.trim() === ""
+        (type === "qotd" && cachedQOTD.answer_id === "") ||
+        (type === "thought" && cachedThought.trim() === "")
       ) {
         return
       }
@@ -38,16 +35,13 @@ export default function useJournal(): UseJournalResults {
       // let data: any = null
 
       if (type === "qotd") {
-        error = (await tieAnswerToUser(
-          authorizationToken,
-          cachedQOTD.answer_id
-        ))[0]
+        error = (
+          await tieAnswerToUser(authorizationToken, cachedQOTD.answer_id)
+        )[0]
       } else if (type === "thought") {
-        error = (await updateThought(
-          authorizationToken,
-          cachedThought,
-          cachedQOTD.day
-        ))[0]
+        error = (
+          await updateThought(authorizationToken, cachedThought, cachedQOTD.day)
+        )[0]
       }
 
       if (error !== null) {
@@ -60,7 +54,7 @@ export default function useJournal(): UseJournalResults {
         return
       }
     },
-    [cachedQOTD, cachedThought, user]
+    [cachedQOTD, cachedThought]
   )
 
   return {
