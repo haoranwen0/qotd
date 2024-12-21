@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef } from "react"
 
 import { Button, Fieldset, Input, IconButton, HStack } from "@chakra-ui/react"
 import { MdPerson } from "react-icons/md"
