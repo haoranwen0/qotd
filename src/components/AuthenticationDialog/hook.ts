@@ -27,7 +27,7 @@ import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDia
 import useJournal from "../../hooks/useJournal"
 
 const useAuthenticationDialog: UseAuthenticationDialog = () => {
-  const { promptToSave } = useAuthenticationDialogContext()
+  const { isOpen, promptToSave } = useAuthenticationDialogContext()
   // const { isOpen, promptToSave } = useAuthenticationDialogContext()
   const { handleJournalSubmission } = useJournal()
 
@@ -163,6 +163,8 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
             type: "success",
             duration: 3500
           })
+
+          isOpen.update(false)
           break
         case "signUp":
           // Sign up user
@@ -179,6 +181,8 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
           })
 
           await sendEmailVerificationHelper(userObject)
+
+          setFormType("signIn")
 
           break
         case "forgetPassword":
@@ -211,8 +215,7 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
         duration: 3500
       })
     } finally {
-      // resetForm()
-      // isOpen.update(false)
+      resetForm()
     }
   }, [formType, form])
 
