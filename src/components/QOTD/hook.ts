@@ -28,6 +28,7 @@ export const useQOTD = (): UseMainResults => {
   const [qotd, setQOTD] = useState<QOTD>({ question: "", day: "" })
   const [response, setResponse] = useState("")
   const [loading, setLoading] = useState(true)
+  const [isPublic, setIsPublic] = useState(false)
 
   const isToday = useMemo(() => {
     return dayParam === undefined
@@ -46,6 +47,10 @@ export const useQOTD = (): UseMainResults => {
     return true
   }, [cachedQOTD, qotd.day, isToday])
 
+  const updateIsPublic = useCallback(() => {
+    setIsPublic(prev => !prev)
+  }, [])
+
   const submitHelper = useCallback(
     async (userObject: User | null) => {
       let authorizationToken = undefined
@@ -59,6 +64,7 @@ export const useQOTD = (): UseMainResults => {
       const [error, data] = await answerQOTD(
         response,
         qotd.day,
+        isPublic,
         authorizationToken
       )
 
@@ -83,7 +89,7 @@ export const useQOTD = (): UseMainResults => {
 
       authenticationDialogPromptToSave.update(false)
     },
-    [qotd, response]
+    [qotd, response, isPublic]
   )
 
   const submit = useCallback(async () => {
@@ -103,7 +109,7 @@ export const useQOTD = (): UseMainResults => {
     } else {
       await submitHelper(user)
     }
-  }, [response])
+  }, [response, submitHelper])
 
   const updateResponse: UpdateResponse = useCallback((e) => {
     setCachedQOTD((prevState) => ({
@@ -154,9 +160,8 @@ export const useQOTD = (): UseMainResults => {
 
     if (error) {
       toaster.create({
-        title: `Error getting question ${
-          isToday ? "of today" : "for the day"
-        }.`,
+        title: `Error getting question ${isToday ? "of today" : "for the day"
+          }.`,
         description: error.message,
         type: "error",
         duration: 3500
@@ -238,6 +243,8 @@ export const useQOTD = (): UseMainResults => {
     currentDate,
     value: qotd,
     loading,
-    navigate
+    navigate,
+    isPublic,
+    updateIsPublic
   }
 }

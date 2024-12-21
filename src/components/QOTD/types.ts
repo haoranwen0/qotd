@@ -24,6 +24,8 @@ interface UseMainResults {
   submitted: boolean
   loading: boolean
   value: QOTD
+  isPublic: boolean
+  updateIsPublic: () => void
   updateResponse: UpdateResponse
   submit: () => void
   navigate: NavigateFunction
