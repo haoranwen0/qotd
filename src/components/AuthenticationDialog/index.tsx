@@ -54,7 +54,7 @@ const AuthenticationDialog: React.FC = () => {
           <MdPerson />
         </IconButton>
       </DialogTrigger>
-      <DialogContent boxShadow="none" bgColor="background">
+      <DialogContent boxShadow="none" bgColor="background" m="md">
         <DialogHeader>
           <DialogTitle>{authenticationDialog.texts.title}</DialogTitle>
         </DialogHeader>
