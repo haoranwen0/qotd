@@ -41,7 +41,7 @@ const QOTD: React.FC = () => {
     <Flex maxW="md" flexDir="column">
       {!qotd.loading && (
         <Box w="full" color="text" h="full">
-          <Heading fontSize="heading.md">{qotd.currentDate}</Heading>
+          <Heading fontSize="heading.md" textAlign={["left", "left", "center"]}>{qotd.currentDate}</Heading>
           <Flex
             gap={qotd.submitted ? 12 : 32}
             flexDir="column"
