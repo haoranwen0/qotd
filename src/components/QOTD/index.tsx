@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 
 import { Toggle } from "../ui/toggle"
 import {
@@ -35,13 +35,15 @@ const buttonStyle: ButtonProps = {
 const QOTD: React.FC = () => {
   const qotd = useQOTD()
 
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
   return (
     <Flex maxW="md" flexDir="column">
       {!qotd.loading && (
         <Box w="full" color="text" h="full">
           <Heading fontSize="heading.md">{qotd.currentDate}</Heading>
           <Flex
-            gap={12}
+            gap={qotd.submitted ? 12 : 32}
             flexDir="column"
             justifyContent="center"
             h="full"
@@ -90,30 +92,37 @@ const QOTD: React.FC = () => {
                         )
                       </Text>
                     </HStack>
-                    <Button {...buttonStyle} onClick={qotd.submit}>
+                    <Button
+                      {...buttonStyle}
+                      ref={buttonRef}
+                      onClick={() => {
+                        buttonRef.current?.blur()
+                        qotd.submit()
+                      }}
+                    >
                       Submit
                     </Button>
                   </VStack>
                 )}
-                <Button
-                  className="group"
-                  variant="subtle"
-                  fontSize="body.secondary"
-                  bgColor="bg-hover"
-                  borderColor="bg-hover"
-                  onClick={() => qotd.navigate("/feed")}
-                >
-                  See what the world thinks...
-                  <Center
-                    transition="transform 350ms ease-in-out"
-                    _groupHover={{ transform: "translateX(4px)" }}
-                  >
-                    <RiArrowRightLine />
-                  </Center>
-                </Button>
               </VStack>
+              <Thought qotdSubmitted={qotd.submitted} qotd={qotd.value} />
             </Flex>
-            <Thought qotdSubmitted={qotd.submitted} qotd={qotd.value} />
+            <Button
+              className="group"
+              variant="subtle"
+              fontSize="body.secondary"
+              bgColor="bg-hover"
+              borderColor="bg-hover"
+              onClick={() => qotd.navigate("/feed")}
+            >
+              See what the world thinks...
+              <Center
+                transition="transform 350ms ease-in-out"
+                _groupHover={{ transform: "translateX(4px)" }}
+              >
+                <RiArrowRightLine />
+              </Center>
+            </Button>
           </Flex>
         </Box>
       )}
