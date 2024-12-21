@@ -63,30 +63,37 @@ const QOTD: React.FC = () => {
                 disabled={qotd.submitted}
                 updateResponse={qotd.updateResponse}
               />
-              <VStack alignItems="flex-start" gap={4}>
+              <VStack alignItems="flex-start" gap={32}>
                 {!qotd.submitted && (
-                  <>
+                  <VStack>
                     <HStack gap={2} alignItems="center">
                       <Toggle
                         pressed={qotd.isPublic}
                         onPressedChange={qotd.updateIsPublic}
-                        size="sm"
+                        size="2xs"
                         aria-label="Toggle answer visibility"
+                        variant="subtle"
                         style={{
-                          backgroundColor: qotd.isPublic ? 'var(--chakra-colors-accent)' : 'var(--chakra-colors-bg-hover)',
-                          border: qotd.isPublic ?
-                            '1px solid var(--chakra-colors-accent)' :
-                            '1px solid var(--chakra-colors-muted)'
+                          backgroundColor: qotd.isPublic
+                            ? "var(--chakra-colors-accent)"
+                            : "var(--chakra-colors-bg-hover)",
+                          border: qotd.isPublic
+                            ? "1px solid var(--chakra-colors-accent)"
+                            : "1px solid var(--chakra-colors-muted)"
                         }}
                       />
                       <Text fontSize="sm" color="muted">
-                        ({qotd.isPublic ? "Share anonymously with the world" : "Keep it private"})
+                        (
+                        {qotd.isPublic
+                          ? "Share anonymously with the world"
+                          : "Keep it private"}
+                        )
                       </Text>
                     </HStack>
                     <Button {...buttonStyle} onClick={qotd.submit}>
-                      Continue
+                      Submit
                     </Button>
-                  </>
+                  </VStack>
                 )}
                 <Button
                   className="group"
@@ -95,7 +102,6 @@ const QOTD: React.FC = () => {
                   bgColor="bg-hover"
                   borderColor="bg-hover"
                   onClick={() => qotd.navigate("/feed")}
-                  mt={32}
                 >
                   See what the world thinks...{" "}
                   <Center
