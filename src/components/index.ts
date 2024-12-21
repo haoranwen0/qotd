@@ -5,7 +5,7 @@ import Response from "./Response"
 import BackgroundCurves from "./BackgroundCurves"
 import ThemeToggle from "./ThemeToggle"
 import QOTD from "./QOTD"
-import AuthenticationControl from "./AuthenticationContorl"
+import AuthenticationControl from "./AuthenticationControl"
 import AnswerFeed from "./AnswerFeed"
 
 export {

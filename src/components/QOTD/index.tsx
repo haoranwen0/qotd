@@ -103,7 +103,7 @@ const QOTD: React.FC = () => {
                   borderColor="bg-hover"
                   onClick={() => qotd.navigate("/feed")}
                 >
-                  See what the world thinks...{" "}
+                  See what the world thinks...
                   <Center
                     transition="transform 350ms ease-in-out"
                     _groupHover={{ transform: "translateX(4px)" }}

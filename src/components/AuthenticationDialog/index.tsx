@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef, useEffect } from "react"
 
 import { Button, Fieldset, Input, IconButton, HStack } from "@chakra-ui/react"
 import { MdPerson } from "react-icons/md"
@@ -21,6 +21,8 @@ const AuthenticationDialog: React.FC = () => {
   const { isOpen, promptToSave } = useAuthenticationDialogContext()
   const authenticationDialog = useAuthenticationDialog()
 
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
   return (
     <DialogRoot
       placement="center"
@@ -36,9 +38,11 @@ const AuthenticationDialog: React.FC = () => {
         asChild
         onClick={() => {
           isOpen.update((prevState) => !prevState)
+          buttonRef.current?.blur()
         }}
       >
         <IconButton
+          ref={buttonRef}
           aria-label="Profile"
           _hover={{ bgColor: "bg-hover" }}
           bgColor="transparent"

@@ -77,11 +77,6 @@ export default function useThought(params: UseThoughtParams) {
 
       // Get the user's authentication token and update the thought
       const authorizationToken = await user.getIdToken()
-
-      console.log("currentValue: ", currentValue)
-      console.log("qotd.day: ", qotd.day)
-      console.log("authorizationToken: ", authorizationToken)
-
       const [error, _] = await updateThought(
         authorizationToken,
         currentValue,
@@ -100,8 +95,6 @@ export default function useThought(params: UseThoughtParams) {
       }
 
       // If the update was successful, i.e. no error update the previous and current values for thought
-      console.log("successfully saved thought!")
-
       // Set saving to true
       setThought((prevState) => ({
         ...prevState,

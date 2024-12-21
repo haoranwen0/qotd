@@ -6,7 +6,9 @@ import {
   sendPasswordResetEmail,
   AuthError,
   updateProfile,
-  User
+  User,
+  sendEmailVerification,
+  signOut
 } from "firebase/auth"
 
 import { auth } from "../../main"
@@ -25,7 +27,8 @@ import { useAuthenticationDialogContext } from "../../contexts/AuthenticationDia
 import useJournal from "../../hooks/useJournal"
 
 const useAuthenticationDialog: UseAuthenticationDialog = () => {
-  const { isOpen, promptToSave } = useAuthenticationDialogContext()
+  const { promptToSave } = useAuthenticationDialogContext()
+  // const { isOpen, promptToSave } = useAuthenticationDialogContext()
   const { handleJournalSubmission } = useJournal()
 
   const [formType, setFormType] = useState<AuthenticationFormType>("signIn")
@@ -57,6 +60,50 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
     setFormType(formType === "signIn" ? "signUp" : "signIn")
     resetForm()
   }, [formType])
+
+  /**
+   * Sends an email verification to the user and handles the UI feedback.
+   *
+   * @param user - The User object to send verification email to
+   *
+   * This function:
+   * 1. Sends a verification email to the user
+   * 2. Displays a success toast with context-specific message
+   * 3. Signs out the user
+   * 4. Handles errors by displaying an error toast
+   */
+  const sendEmailVerificationHelper = useCallback(
+    async (user: User) => {
+      try {
+        await sendEmailVerification(user)
+
+        const titleMap: Record<AuthenticationFormType, string> = {
+          signIn: "It looks like you're not verified yet",
+          signUp: "Signed up successfully",
+          forgetPassword: ""
+        }
+
+        toaster.create({
+          title: titleMap[formType],
+          description:
+            "A verification email has been sent to your inbox. Please verify your email before signing in again.",
+          type: "success",
+          duration: 5000
+        })
+
+        await signOut(auth)
+      } catch (error) {
+        const { code } = error as AuthError
+        toaster.create({
+          title: "Error sending email verification",
+          description: code,
+          type: "error",
+          duration: 3500
+        })
+      }
+    },
+    [auth, formType]
+  )
 
   const handleSubmit: SubmitForm = useCallback(async () => {
     // Get form values
@@ -104,6 +151,13 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
             password
           )
           userObject = signInResult.user
+
+          // If user is not verified, send them a verification email
+          if (!userObject.emailVerified) {
+            await sendEmailVerificationHelper(userObject)
+            return
+          }
+
           toaster.create({
             title: "Signed in successfully.",
             type: "success",
@@ -118,15 +172,14 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
             password
           )
           userObject = signUpResult.user
+
           // Update user profile with a random username
           await updateProfile(signUpResult.user, {
             displayName: generateUsername()
           })
-          toaster.create({
-            title: "Signed up successfully.",
-            type: "success",
-            duration: 3500
-          })
+
+          await sendEmailVerificationHelper(userObject)
+
           break
         case "forgetPassword":
           await sendPasswordResetEmail(auth, email)
@@ -140,8 +193,12 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
           break
       }
 
-      // If user is signing in or signing up, submit journal entries
-      if (["signIn", "signUp"].includes(formType)) {
+      // If user is signing in and they are a verified user
+      if (
+        formType === "signIn" &&
+        userObject !== null &&
+        userObject.emailVerified
+      ) {
         await handleJournalSubmission(userObject, "qotd")
         await handleJournalSubmission(userObject, "thought")
       }
@@ -154,8 +211,8 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
         duration: 3500
       })
     } finally {
-      resetForm()
-      isOpen.update(false)
+      // resetForm()
+      // isOpen.update(false)
     }
   }, [formType, form])
 

@@ -133,7 +133,6 @@ export const useQOTD = (): UseMainResults => {
         authenticationDialogIsOpen.value !== true &&
         authenticationDialogPromptToSave.value === true
       ) {
-        console.log("submitting after authentication")
         await submitHelper(user)
       }
     })()
@@ -210,7 +209,6 @@ export const useQOTD = (): UseMainResults => {
 
     // Update states associated with the answer
     if (data !== null) {
-
       if (data.answer !== null && data.answer_id !== null) {
         // Update the response
         setResponse(data.answer as string)
@@ -233,7 +231,7 @@ export const useQOTD = (): UseMainResults => {
       await getQOTDHelper()
       await getAnswerForDayHelper()
     })()
-  }, [dayParam])
+  }, [dayParam, user])
 
   return {
     response,
