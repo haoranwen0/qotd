@@ -38,12 +38,13 @@ export const getQOTD = async (day?: string): ApiResponse<QOTD> => {
 export const answerQOTD = async (
   answer: string,
   day: string,
+  isPublic: boolean,
   authorizationToken?: string
 ): ApiResponse<AnswerQOTDResponse> => {
   try {
     const response = await axios.post<AnswerQOTDResponse>(
       `${import.meta.env.VITE_API_URL}/qotd/${getLocaleDate()}`,
-      { answer, day },
+      { answer, day, is_public: isPublic},
       // If authorization token is provided, add it to the headers
       {
         ...(authorizationToken && {

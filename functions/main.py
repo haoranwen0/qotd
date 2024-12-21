@@ -174,6 +174,7 @@ def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
         return https_fn.Response("Invalid day", status=400, headers=get_headers())
 
     answer = req.json["answer"]
+    is_public = req.json["is_public"]
 
     # Make sure question exists
     question_doc_ref = db.collection("questions").document(day)
@@ -182,7 +183,7 @@ def answer_qotd(req: https_fn.Request, day: str) -> https_fn.Response:
         return https_fn.Response("Question not found", status=404, headers=get_headers())
     
     # Add to answers
-    _, answer_doc_ref = db.collection("answers").add({"answer": answer, "day": day})
+    _, answer_doc_ref = db.collection("answers").add({"answer": answer, "day": day, "is_public": is_public})
     # Add to question answer_ids
     question_doc_ref.update({"answer_ids": firestore.ArrayUnion([answer_doc_ref.id])})
 
@@ -359,8 +360,14 @@ def get_answer_ids_for_question(req: https_fn.Request, day: str) -> https_fn.Res
         return https_fn.Response("Question not found", status=404, headers=get_headers())
 
     answer_ids = question_doc.get("answer_ids")
-    num_samples = min(100, len(answer_ids))
-    rtn = random.sample(answer_ids, num_samples)
+    public_answer_ids = []
+    for answer_id in answer_ids:
+        answer_doc_ref = db.collection("answers").document(answer_id)
+        answer_doc = answer_doc_ref.get()
+        if answer_doc.get("is_public"):
+            public_answer_ids.append(answer_id)
+    num_samples = min(100, len(public_answer_ids))
+    rtn = random.sample(public_answer_ids, num_samples)
     return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
 
 
