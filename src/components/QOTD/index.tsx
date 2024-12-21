@@ -10,7 +10,7 @@ import {
   Center,
   VStack,
   HStack,
-  Text,
+  Text
 } from "@chakra-ui/react"
 import { RiArrowRightLine } from "react-icons/ri"
 
@@ -105,8 +105,8 @@ const QOTD: React.FC = () => {
                   </VStack>
                 )}
               </VStack>
-              <Thought qotdSubmitted={qotd.submitted} qotd={qotd.value} />
             </Flex>
+            <Thought qotdSubmitted={qotd.submitted} qotd={qotd.value} />
             <Button
               className="group"
               variant="subtle"
