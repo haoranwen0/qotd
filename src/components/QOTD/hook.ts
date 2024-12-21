@@ -80,16 +80,16 @@ export const useQOTD = (): UseMainResults => {
       }
 
       if (data !== null) {
-        setCachedQOTD({
-          ...cachedQOTD,
+        setCachedQOTD((prevState) => ({
+          ...prevState,
           response,
           answer_id: data.answer_id
-        })
+        }))
       }
 
       authenticationDialogPromptToSave.update(false)
     },
-    [qotd, response, isPublic, cachedQOTD, authenticationDialogPromptToSave]
+    [qotd, response, isPublic, authenticationDialogPromptToSave, setCachedQOTD]
   )
 
   const submit = useCallback(async () => {
