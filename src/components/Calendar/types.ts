@@ -10,10 +10,6 @@ export interface UseCalendarResults {
     value: Date
     update: Dispatch<SetStateAction<Date>>
   }
-  showCalendar: {
-    value: boolean
-    update: Dispatch<SetStateAction<boolean>>
-  }
   previousMonth: PreviousMonth
   nextMonth: NextMonth
   generateCalendar: GenerateCalendar

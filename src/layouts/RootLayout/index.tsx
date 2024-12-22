@@ -18,7 +18,7 @@ const RootLayout: React.FC = () => {
   if (loading) return <></>
 
   return (
-    <Flex minH="100dvh" bg="background" p={8} justifyContent="center">
+    <Flex minH="100dvh" bg="background" p="lg" justifyContent="center">
       {user !== null && <Calendar />}
       <BackgroundCurves />
       <Toaster />
