@@ -61,7 +61,7 @@ const Calendar: React.FC = () => {
         bgColor="transparent"
         pos={{ base: "absolute", sm: "static" }}
         right={{ base: "0", sm: "auto" }}
-        transform={{ base: "translateX(96px)", sm: "none" }}
+        transform={{ base: "translateX(84px)", sm: "none" }}
       >
         <Card.Root maxW="md" bgColor="secondary" variant="subtle">
           <Card.Header p={4}>
@@ -115,7 +115,7 @@ const Calendar: React.FC = () => {
                   textAlign="center"
                   // p={2}
                   aspectRatio="square"
-                  fontSize="sm"
+                  fontSize={{ base: "xs", sm: "sm" }}
                   fontWeight="medium"
                   color="gray.500"
                 >
@@ -165,7 +165,7 @@ const Calendar: React.FC = () => {
                         : undefined
                     }
                   >
-                    <Text>{day}</Text>
+                    <Text fontSize={{ base: "xs", sm: "sm" }}>{day}</Text>
                     {userHasAnsweredForDay && (
                       <Box h={1} w={1} bgColor="primary" rounded="full" />
                     )}
