@@ -13,6 +13,7 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
   const [answerIds, setAnswerIds] = useState<string[]>([])
   const [answers, setAnswers] = useState<string[]>([])
   const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0)
+  const [gotInitialAnswerIds, setGotInitialAnswerIds] = useState(false)
   const [hasDoneInitialFetch, setHasDoneInitialFetch] = useState(false)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
@@ -100,15 +101,19 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
   // Fetch answer IDs on mount
   useEffect(() => {
     getOtherAnswerIDsHelper()
+    setGotInitialAnswerIds(true)
   }, [])
 
   // Fetch initial batch on mount after answer IDs are fetched
   useEffect(() => {
-    if (currentAnswerIndex === 0 && answerIds.length > 0) {
-      loadNextBatch()
+    if (gotInitialAnswerIds) {
+      if (currentAnswerIndex === 0 && answerIds.length > 0) {
+        console.log("Loading initial batch")
+        loadNextBatch()
+      }
       setHasDoneInitialFetch(true)
     }
-  }, [answerIds])
+  }, [gotInitialAnswerIds, currentAnswerIndex, answerIds])
 
   useEffect(() => {
     // Fetch next batch if we're at the second to last answer and there are more answers to fetch
