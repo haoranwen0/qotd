@@ -20,6 +20,7 @@ interface CachedQOTD extends QOTD {
 
 interface UseMainResults {
   response: string
+  day: string
   currentDate: string
   submitted: boolean
   loading: boolean

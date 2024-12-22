@@ -238,6 +238,7 @@ export const useQOTD = (): UseMainResults => {
     updateResponse,
     submit,
     submitted: userHasSubmittedResponse,
+    day: qotd.day,
     currentDate,
     value: qotd,
     loading,
