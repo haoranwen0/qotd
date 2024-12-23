@@ -369,7 +369,6 @@ def get_answer_ids_for_question(req: https_fn.Request, day: str) -> https_fn.Res
         answer_doc = answer_doc_ref.get()
         if answer_doc.get("is_public"):
             public_answer_ids.append(answer_id)
-    print(public_answer_ids)
     num_samples = min(100, len(public_answer_ids))
     rtn = random.sample(public_answer_ids, num_samples)
     return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
