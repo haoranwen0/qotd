@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react"
+
+import { Link } from "react-router-dom"
+
 import {
   Flex,
   Box,
@@ -6,10 +9,11 @@ import {
   Button,
   ButtonProps,
   Text,
-  Center
+  Center,
+  HStack
 } from "@chakra-ui/react"
 import { keyframes } from "@emotion/react"
-import { RiArrowRightLine } from "react-icons/ri"
+import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri"
 import { useAnswerFeed } from "./hook"
 
 const fadeOut = keyframes`
@@ -88,11 +92,20 @@ const AnswerFeed: React.FC = () => {
     <Flex maxW="md" flexDir="column" minH="400px" minW={["full", "md"]}>
       <Box w="full" color="text" h="full">
         {/* Fixed-height header */}
-        <Box mb={6}>
+        <HStack mb={6} justifyContent="space-between">
           <Heading fontSize="heading.md">
             Answer {currentAnswerIndex + 1} of {answerIds.length}
           </Heading>
-        </Box>
+          <Button variant="plain" color="muted" className="group">
+            <Center
+              transition="transform 350ms ease-in-out"
+              _groupHover={{ transform: "translateX(-4px)" }}
+            >
+              <RiArrowLeftLine />
+            </Center>
+            <Link to="/">Back to journal</Link>
+          </Button>
+        </HStack>
 
         {/* Content area */}
         <Flex
