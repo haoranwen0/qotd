@@ -1,6 +1,5 @@
 import React, {
   FormEvent,
-  FormEventHandler,
   useCallback,
   useRef,
   useState
@@ -26,7 +25,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogBody,
-  DialogFooter,
   DialogCloseTrigger
 } from "../ui/dialog"
 import { Button } from "../ui/button"
