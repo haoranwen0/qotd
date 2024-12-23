@@ -113,7 +113,7 @@ const QOTD: React.FC = () => {
               fontSize="body.secondary"
               bgColor="bg-hover"
               borderColor="bg-hover"
-              onClick={() => qotd.navigate("/feed")}
+              onClick={() => qotd.navigate(`/feed/${qotd.day}`)}
             >
               See what the world thinks...
               <Center

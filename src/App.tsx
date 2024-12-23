@@ -18,7 +18,9 @@ const router = createBrowserRouter(
       <Route path="day">
         <Route path=":day" element={<Main />} />
       </Route>
-      <Route path="feed" element={<ViewAnswer />} />
+      <Route path="feed">
+        <Route path=":day" element={<ViewAnswer />} />
+      </Route>
       <Route path="*" element={<NotFound />} />
     </Route>
   )
