@@ -4,11 +4,12 @@ import _ from "lodash"
 
 import { getOtherAnswerIDs, getOtherAnswers } from "../../utils/api/viewOthers"
 import { toaster } from "../ui/toaster"
-import { getLocaleDate } from "../../utils/utils"
 import { UseAnswerFeedResults } from "./types"
+import { useParams } from "react-router-dom"
 
 export const useAnswerFeed = (): UseAnswerFeedResults => {
   // const { user } = useAuthContext()
+  const { day } = useParams()
 
   const [answerIds, setAnswerIds] = useState<string[]>([])
   const [answers, setAnswers] = useState<string[]>([])
@@ -24,7 +25,16 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
     //   return
     // }
     // const authorizationToken = await user.getIdToken()
-    const [error, data] = await getOtherAnswerIDs(getLocaleDate())
+    if (day === undefined) {
+      toaster.create({
+        title: "Day is undefined when getting other answer IDs",
+        description: "Day is undefined",
+        type: "error",
+        duration: 3500
+      })
+      return
+    }
+    const [error, data] = await getOtherAnswerIDs(day)
 
     if (error) {
       toaster.create({
