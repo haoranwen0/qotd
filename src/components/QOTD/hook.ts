@@ -35,6 +35,7 @@ export const useQOTD = (): UseMainResults => {
   }, [dayParam])
 
   const userHasSubmittedResponse = useMemo(() => {
+    // If today, return true if the user has submitted a response
     if (isToday) {
       return (
         cachedQOTD.day === qotd.day &&
@@ -46,6 +47,14 @@ export const useQOTD = (): UseMainResults => {
     // Return true if not today. Assumes that the user only lands on /day/{some date} through the calendar on a date that they answered
     return true
   }, [cachedQOTD, qotd.day, isToday])
+
+  // If the user is not authenticated and it's not today's QOTD, redirect to home. I.e., user logs out when they're on a day that they answered for.
+  // Logging out should clear the cache and redirect them to home
+  useEffect(() => {
+    if (user === null && !isToday) {
+      navigate("/")
+    }
+  }, [user, isToday])
 
   const updateIsPublic = useCallback(() => {
     setIsPublic(prev => !prev)
@@ -120,7 +129,7 @@ export const useQOTD = (): UseMainResults => {
 
   useEffect(() => {
     setResponse(cachedQOTD.response)
-  }, [cachedQOTD])
+  }, [cachedQOTD.response])
 
   /* If the authentication dialog is open and the prompt to save is true, submit the answer.
    * This happens when an authenticated user answers the question. The authentication dialog
