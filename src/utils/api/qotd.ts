@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 import { AnswerQOTDResponse, ApiResponse } from "./types"
 import { getLocaleDate } from "../utils"
@@ -23,7 +23,7 @@ export const getQOTD = async (day?: string): ApiResponse<QOTD> => {
     )
     return [null, response.data]
   } catch (error) {
-    return [error as Error, null]
+    return [error as AxiosError, null]
   }
 }
 
@@ -44,7 +44,7 @@ export const answerQOTD = async (
   try {
     const response = await axios.post<AnswerQOTDResponse>(
       `${import.meta.env.VITE_API_URL}/qotd/${getLocaleDate()}`,
-      { answer, day, is_public: isPublic},
+      { answer, day, is_public: isPublic },
       // If authorization token is provided, add it to the headers
       {
         ...(authorizationToken && {
@@ -56,6 +56,6 @@ export const answerQOTD = async (
     )
     return [null, response.data]
   } catch (error) {
-    return [error as Error, null]
+    return [error as AxiosError, null]
   }
 }

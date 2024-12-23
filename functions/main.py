@@ -250,7 +250,7 @@ def get_thought(req: https_fn.Request, day: str) -> https_fn.Response:
     except KeyError:
         thought_id = None
     if not thought_id:
-        return https_fn.Response("Thought not found", status=404, headers=get_headers())
+        return https_fn.Response(json.dumps({"thought": None}), status=200, headers=get_headers())
 
     thought_doc_ref = db.collection("thoughts").document(thought_id)
     thought_doc = thought_doc_ref.get()

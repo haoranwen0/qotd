@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 import { ApiResponse } from "./types"
 
@@ -9,14 +9,14 @@ import { ApiResponse } from "./types"
  * @returns A Promise that resolves to an ApiResponse containing either the answer IDs or an Error.
  */
 export const getOtherAnswerIDs = async (day: string): ApiResponse<string[]> => {
-    try {
-        const response = await axios.get<string[]>(
-            `${import.meta.env.VITE_API_URL}/answer_ids_for_question/${day}`
-        )
-        return [null, response.data]
-    } catch (error) {
-        return [error as Error, null]
-    }
+  try {
+    const response = await axios.get<string[]>(
+      `${import.meta.env.VITE_API_URL}/answer_ids_for_question/${day}`
+    )
+    return [null, response.data]
+  } catch (error) {
+    return [error as AxiosError, null]
+  }
 }
 
 /**
@@ -25,18 +25,20 @@ export const getOtherAnswerIDs = async (day: string): ApiResponse<string[]> => {
  * @param answerIDs - Required. List of answer IDs to fetch the answers for.
  * @returns A Promise that resolves to an ApiResponse containing either the answers or an Error.
  */
-export const getOtherAnswers = async (answerIDs: string[]): ApiResponse<string[]> => {
-    console.log("Getting other answers", answerIDs)
+export const getOtherAnswers = async (
+  answerIDs: string[]
+): ApiResponse<string[]> => {
+  console.log("Getting other answers", answerIDs)
 
-    try {
-        const response = await axios.post<string[]>(
-            `${import.meta.env.VITE_API_URL}/answers_for_answer_ids`,
-            {
-                answer_ids: answerIDs
-            }
-        )
-        return [null, response.data]
-    } catch (error) {
-        return [error as Error, null]
-    }
+  try {
+    const response = await axios.post<string[]>(
+      `${import.meta.env.VITE_API_URL}/answers_for_answer_ids`,
+      {
+        answer_ids: answerIDs
+      }
+    )
+    return [null, response.data]
+  } catch (error) {
+    return [error as AxiosError, null]
+  }
 }

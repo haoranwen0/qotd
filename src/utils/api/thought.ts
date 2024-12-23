@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 import { ApiResponse, GetThoughtResponse } from "./types"
 import { UpdateThoughtResponse } from "./types"
@@ -23,7 +23,7 @@ export const updateThought = async (
     )
     return [null, response.data]
   } catch (error) {
-    return [error as Error, null]
+    return [error as AxiosError, null]
   }
 }
 
@@ -42,6 +42,6 @@ export const getThought = async (
     )
     return [null, response.data]
   } catch (error) {
-    return [error as Error, null]
+    return [error as AxiosError, null]
   }
 }

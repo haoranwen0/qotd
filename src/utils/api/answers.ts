@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 import {
   ApiResponse,
@@ -21,7 +21,7 @@ export const getDaysAnswered = async (
     )
     return [null, response.data as string[]]
   } catch (error) {
-    return [error as Error, null]
+    return [error as AxiosError, null]
   }
 }
 
@@ -41,7 +41,7 @@ export const getAnswerForDay = async (
 
     return [null, response.data]
   } catch (error) {
-    return [error as Error, null]
+    return [error as AxiosError, null]
   }
 }
 
@@ -60,6 +60,6 @@ export const tieAnswerToUser = async (
 
     return [null, response.data.message]
   } catch (error) {
-    return [error as Error, null]
+    return [error as AxiosError, null]
   }
 }

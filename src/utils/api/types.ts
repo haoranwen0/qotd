@@ -1,4 +1,6 @@
-export type ApiResponse<T> = Promise<[Error | null, null | T]>
+import { AxiosError } from "axios"
+
+export type ApiResponse<T> = Promise<[AxiosError | null, null | T]>
 
 export interface AnswerQOTDResponse {
   answer_id: string
@@ -14,7 +16,7 @@ export interface GetAnswerForDayResponse {
 }
 
 export interface GetThoughtResponse {
-  thought: string
+  thought: string | null
 }
 
 export interface TieAnswerToUserResponse {
