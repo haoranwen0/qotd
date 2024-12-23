@@ -143,12 +143,23 @@ export const useQOTD = (): UseMainResults => {
   ])
 
   const currentDate = useMemo(() => {
+    // If the day param is defined, use it (i.e. if the user navigates to /day/{some date})
+    if (dayParam !== undefined) {
+      const [year, month, day] = dayParam.split("-").map(Number)
+      return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      })
+    }
+
+    // Otherwise, use the current date
     return new Date().toLocaleDateString("en-US", {
       day: "numeric",
       month: "long",
       year: "numeric"
     })
-  }, [])
+  }, [dayParam])
 
   const getQOTDHelper = useCallback(async () => {
     let dayToGet = isToday ? getLocaleDate() : dayParam

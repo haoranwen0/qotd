@@ -15,13 +15,14 @@ import {
   MdChevronRight,
   MdOutlineCalendarToday
 } from "react-icons/md"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu"
 import useCalendar from "./hook"
 import { monthNames, dayNames } from "../../utils/constants"
 
 const Calendar: React.FC = () => {
+  const { day: dateSelected } = useParams()
   const navigate = useNavigate()
   const {
     currentDate,
@@ -142,6 +143,11 @@ const Calendar: React.FC = () => {
 
                 const userHasAnsweredForDay = daysAnswered.has(date)
 
+                const dateIsSelected = date === dateSelected
+
+                // Only clickable if day exists, user has answered for day, and day is not in the future
+                const isClickableDay = day && !isFuture && userHasAnsweredForDay
+
                 return (
                   <VStack
                     key={index}
@@ -149,21 +155,27 @@ const Calendar: React.FC = () => {
                     p={2}
                     gap={0}
                     aspectRatio="square"
-                    cursor={day && !isFuture ? "pointer" : "default"}
+                    cursor={isClickableDay ? "pointer" : "default"}
                     borderRadius="md"
-                    bg={isToday ? "accent" : "transparent"}
+                    bg={
+                      isToday
+                        ? "accent"
+                        : dateIsSelected
+                        ? "bg-hover"
+                        : "transparent"
+                    }
                     opacity={isFuture ? "0.25" : "1"}
                     color="text"
                     transition="background 150ms ease-in-out"
                     _hover={{
-                      bg: day && !isFuture ? "bg-hover" : "transparent"
+                      bg: isClickableDay ? "bg-hover" : "transparent"
                     }}
                     fontWeight={isToday ? "semibold" : "normal"}
-                    onClick={
-                      userHasAnsweredForDay
-                        ? () => navigate(`/day/${date}`)
-                        : undefined
-                    }
+                    onClick={() => {
+                      if (userHasAnsweredForDay) {
+                        navigate(isToday ? "/" : `/day/${date}`)
+                      }
+                    }}
                   >
                     <Text>{day}</Text>
                     {userHasAnsweredForDay && (
