@@ -14,7 +14,6 @@ export default function useCalendar(): UseCalendarResults {
   const { user } = useAuthContext()
 
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [showCalendar, setShowCalendar] = useState<boolean>(false)
   const [daysAnswered, setDaysAnswered] = useState<Set<string>>(new Set())
 
   // Calendar helper functions
@@ -85,7 +84,6 @@ export default function useCalendar(): UseCalendarResults {
 
   return {
     currentDate: { value: currentDate, update: setCurrentDate },
-    showCalendar: { value: showCalendar, update: setShowCalendar },
     previousMonth,
     nextMonth,
     generateCalendar,

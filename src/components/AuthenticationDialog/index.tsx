@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef } from "react"
 
 import { Button, Fieldset, Input, IconButton, HStack } from "@chakra-ui/react"
 import { MdPerson } from "react-icons/md"
@@ -29,6 +29,7 @@ const AuthenticationDialog: React.FC = () => {
       motionPreset="slide-in-bottom"
       size="sm"
       open={isOpen.value}
+      lazyMount
       onOpenChange={(openChangeDetails) =>
         isOpen.update(openChangeDetails.open)
       }
@@ -54,7 +55,13 @@ const AuthenticationDialog: React.FC = () => {
           <MdPerson />
         </IconButton>
       </DialogTrigger>
-      <DialogContent boxShadow="none" bgColor="background">
+      <DialogContent
+        boxShadow="none"
+        bgColor="background"
+        m="md"
+        position="relative"
+        overflowY="auto"
+      >
         <DialogHeader>
           <DialogTitle>{authenticationDialog.texts.title}</DialogTitle>
         </DialogHeader>

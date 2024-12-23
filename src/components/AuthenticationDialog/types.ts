@@ -26,7 +26,7 @@ export const AUTH_FORM_CONTENT = {
   signUp: {
     title: "Create an Account",
     description: "Fill out the form below to get started",
-    button: "Create Account",
+    button: "Sign Up",
     redirect: "Already have an account?",
     redirectButton: "Sign in"
   },
