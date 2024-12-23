@@ -12,7 +12,7 @@ const AuthenticationControl: React.FC = () => {
   const validUser = user !== null && user.emailVerified
 
   return (
-    <Box pos="absolute" top="sm" right="sm">
+    <Box pos="absolute" top={7} right="lg">
       {validUser ? <UserMenu /> : <AuthenticationDialog />}
     </Box>
   )
