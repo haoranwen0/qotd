@@ -11,6 +11,7 @@ import {
   AuthenticationControl
 } from "../../components"
 import { AuthenticationDialogProvider } from "../../contexts/AuthenticationDialogContext"
+import FeedbackForm from "../../components/FeedbackForm"
 
 const RootLayout: React.FC = () => {
   const { loading, user } = useAuthContext()
@@ -26,6 +27,7 @@ const RootLayout: React.FC = () => {
         <Outlet />
         <AuthenticationControl />
       </AuthenticationDialogProvider>
+      <FeedbackForm />
     </Flex>
   )
 }
