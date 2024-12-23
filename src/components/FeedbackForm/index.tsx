@@ -33,6 +33,7 @@ import { Button } from "../ui/button"
 import { Radio, RadioGroup } from "../ui/radio"
 import type { FeedbackForm } from "./types"
 import { toaster } from "../ui/toaster"
+import { collectFeedback } from "../../utils/api/feedback"
 
 const FeedbackForm: React.FC = () => {
   // Ref Declarations
@@ -43,6 +44,7 @@ const FeedbackForm: React.FC = () => {
     experience: "",
     general: ""
   })
+  const [formOpened, setFormOpened] = useState(false)
 
   const validFeedbackForm = useCallback(() => {
     if (feedback.experience === "" && feedback.general.trim() === "") {
@@ -60,12 +62,41 @@ const FeedbackForm: React.FC = () => {
   }, [feedback])
 
   const onSubmit = useCallback(
-    (e: FormEvent) => {
+    async (e: FormEvent) => {
       e.preventDefault()
 
       if (validFeedbackForm()) {
         // Call api to submit feedback
-        console.log("WOW")
+        const [error, _] = await collectFeedback(
+          feedback.experience,
+          feedback.general
+        )
+
+        if (error !== null) {
+          toaster.create({
+            title: "Error",
+            description: error.message,
+            type: "error",
+            duration: 3500
+          })
+
+          return
+        }
+
+        toaster.create({
+          title: "Thanks!",
+          description:
+            "Your feedback has been submitted. We appreciate your input!",
+          type: "success",
+          duration: 3500
+        })
+
+        setFormOpened(false)
+
+        setFeedback({
+          experience: "",
+          general: ""
+        })
       }
     },
     [validFeedbackForm]
@@ -78,6 +109,10 @@ const FeedbackForm: React.FC = () => {
         size="sm"
         motionPreset="slide-in-bottom"
         lazyMount
+        open={formOpened}
+        onOpenChange={(openChangeDetails) => {
+          setFormOpened(openChangeDetails.open)
+        }}
       >
         <DialogTrigger
           asChild

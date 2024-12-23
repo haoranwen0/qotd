@@ -22,3 +22,7 @@ export interface GetThoughtResponse {
 export interface TieAnswerToUserResponse {
   message: string
 }
+
+export interface CollectFeedbackResponse {
+  message: string
+}
