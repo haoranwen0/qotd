@@ -121,6 +121,7 @@ def router(request):
         {"pattern": r"^/days_answered$", "methods": {"GET": get_days_answered}},
         {"pattern": r"^/answer_ids_for_question/(?P<day>[^/]+)$", "methods": {"GET": get_answer_ids_for_question}},
         {"pattern": r"^/answers_for_answer_ids$", "methods": {"POST": get_answers_for_answer_ids}},
+        {"pattern": r"^/feedback$", "methods": {"POST": collect_feedback}},
         {"pattern": r"^/populate_questions$", "methods": {"POST": populate_questions}},
         {"pattern": r"^/test/(?P<uid>[^/]+)$", "methods": {"GET": get_test_user}},
         # {
@@ -385,6 +386,13 @@ def get_answers_for_answer_ids(req: https_fn.Request) -> https_fn.Response:
 
     print(f"Got answers for {answer_ids}: {rtn}")
     return https_fn.Response(json.dumps(rtn), status=200, headers=get_headers())
+
+
+def collect_feedback(req: https_fn.Request) -> https_fn.Response:
+    rating = req.json["rating"]
+    feedback = req.json["feedback"]
+    db.collection("feedback").add({"rating": rating, "feedback": feedback})
+    return https_fn.Response(json.dumps({"message": "Feedback collected"}), status=200, headers=get_headers())
 
 
 def get_uid(header: Dict[str, str]) -> str:
