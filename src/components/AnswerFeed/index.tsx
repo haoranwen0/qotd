@@ -80,8 +80,8 @@ const AnswerFeed: React.FC = () => {
   if (answers.length === 0 || !currentAnswer) {
     // Display "Nobody has answered" message
     return (
-      <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
-        <Text fontSize="xl" color="muted">
+      <Flex w="full" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
+        <Text fontSize="lg" color="muted" textAlign="center" whiteSpace="nowrap">
           Nobody has answered this question yet. Be the first!
         </Text>
       </Flex>

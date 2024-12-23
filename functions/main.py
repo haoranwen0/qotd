@@ -359,7 +359,10 @@ def get_answer_ids_for_question(req: https_fn.Request, day: str) -> https_fn.Res
     if not question_doc.exists:
         return https_fn.Response("Question not found", status=404, headers=get_headers())
 
-    answer_ids = question_doc.get("answer_ids")
+    try:
+        answer_ids = question_doc.get("answer_ids")
+    except KeyError:
+        answer_ids = []
     public_answer_ids = []
     for answer_id in answer_ids:
         answer_doc_ref = db.collection("answers").document(answer_id)
