@@ -37,12 +37,11 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
       return
     }
 
-    console.log("Got random answer IDs", data)
-
     // TODO
     // Update states associated with the answer
     if (data !== null) {
       setAnswerIds(data)
+      setGotInitialAnswerIds(true)
     }
   }, [])
 
@@ -51,7 +50,6 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
     //   return
     // }
     // const authorizationToken = await user.getIdToken()
-    console.log("Getting other answers", nextIds)
 
     const [error, data] = await getOtherAnswers(nextIds)
 
@@ -64,8 +62,6 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
       })
       return
     }
-
-    console.log("Got actual answers", data)
 
     // TODO
     // Update states associated with the answer
@@ -101,14 +97,12 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
   // Fetch answer IDs on mount
   useEffect(() => {
     getOtherAnswerIDsHelper()
-    setGotInitialAnswerIds(true)
   }, [])
 
   // Fetch initial batch on mount after answer IDs are fetched
   useEffect(() => {
     if (gotInitialAnswerIds) {
       if (currentAnswerIndex === 0 && answerIds.length > 0) {
-        console.log("Loading initial batch")
         loadNextBatch()
       }
       setHasDoneInitialFetch(true)
@@ -118,7 +112,6 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
   useEffect(() => {
     // Fetch next batch if we're at the second to last answer and there are more answers to fetch
     if (currentAnswerIndex === answers.length - 2 && hasMore) {
-      console.log("Loading next batch")
       loadNextBatch()
     }
   }, [currentAnswerIndex])

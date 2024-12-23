@@ -361,7 +361,6 @@ def get_answer_ids_for_question(req: https_fn.Request, day: str) -> https_fn.Res
 
     try:
         answer_ids = question_doc.get("answer_ids")
-        print(answer_ids)
     except KeyError:
         answer_ids = []
     public_answer_ids = []
