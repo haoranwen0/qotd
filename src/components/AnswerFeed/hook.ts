@@ -101,6 +101,7 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
       console.error("Error fetching answers:", error)
     } finally {
       setLoading(false)
+      setHasDoneInitialFetch(true)
     }
   }
 
@@ -115,7 +116,6 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
       if (currentAnswerIndex === 0 && answerIds.length > 0) {
         loadNextBatch()
       }
-      setHasDoneInitialFetch(true)
     }
   }, [gotInitialAnswerIds, currentAnswerIndex, answerIds])
 

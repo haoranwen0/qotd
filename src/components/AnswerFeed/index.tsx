@@ -40,6 +40,11 @@ const buttonStyle: ButtonProps = {
   fontSize: "lg"
 }
 
+const bounce = keyframes`
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-8px); }
+`
+
 const AnswerFeed: React.FC = () => {
   const { answerIds, answers, currentAnswerIndex, showNextAnswer, hasDoneInitialFetch, loading, hasMore } = useAnswerFeed()
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -72,7 +77,42 @@ const AnswerFeed: React.FC = () => {
   if (!hasDoneInitialFetch) {
     return (
       <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
-        <Text color="text">Loading...</Text>
+        <Text
+          color="text"
+          fontSize="lg"
+          textAlign="center"
+          opacity={0.8}
+        >
+          Finding thoughtful answers
+          <HStack gap={1} display="inline-flex" ml={2}>
+            <Box
+              as="span"
+              h="6px"
+              w="6px"
+              borderRadius="full"
+              bg="accent"
+              animation={`${bounce} 1.4s ease-in-out infinite`}
+            />
+            <Box
+              as="span"
+              h="6px"
+              w="6px"
+              borderRadius="full"
+              bg="accent"
+              animation={`${bounce} 1.4s ease-in-out infinite`}
+              animationDelay="0.2s"
+            />
+            <Box
+              as="span"
+              h="6px"
+              w="6px"
+              borderRadius="full"
+              bg="accent"
+              animation={`${bounce} 1.4s ease-in-out infinite`}
+              animationDelay="0.4s"
+            />
+          </HStack>
+        </Text>
       </Flex>
     )
   }
@@ -80,8 +120,20 @@ const AnswerFeed: React.FC = () => {
   if (answers.length === 0 || !currentAnswer) {
     // Display "Nobody has answered" message
     return (
-      <Flex w="full" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
-        <Text fontSize="lg" color="muted" textAlign="center" whiteSpace="nowrap">
+      <Flex
+        w="full"
+        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+        minH="400px"
+        px={4} // Add padding
+      >
+        <Text
+          fontSize="lg"
+          color="muted"
+          textAlign="center"
+        // Remove whiteSpace="nowrap"
+        >
           Nobody has answered this question yet. Be the first!
         </Text>
       </Flex>
