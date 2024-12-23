@@ -73,11 +73,11 @@ export default function useThought(params: UseThoughtParams) {
     // If the fetch was successful, set the thought
     if (data !== null) {
       setThought({
-        current: data.thought,
-        previous: data.thought,
+        current: data.thought ?? "",
+        previous: data.thought ?? "",
         isSaving: false
       })
-      setCachedThought(data.thought)
+      setCachedThought(data.thought ?? "")
     }
   }, [user, cachedThought, dayParam, qotd.day])
 
