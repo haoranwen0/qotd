@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 
+import { useParams } from "react-router-dom"
 import _ from "lodash"
 
 import { toaster } from "../ui/toaster"
@@ -13,6 +14,7 @@ export default function useThought(params: UseThoughtParams) {
   const { qotd } = params
   const { user } = useAuth()
   const { cachedThought, setCachedThought } = useJournal()
+  const { day: dayParam } = useParams()
 
   const [thought, setThought] = useState<Thought>({
     current: "",
@@ -33,7 +35,7 @@ export default function useThought(params: UseThoughtParams) {
    * On API error:
    * - Displays an error toast notification to the user
    */
-  const getThoughtHelper = async () => {
+  const getThoughtHelper = useCallback(async () => {
     // If the user is not authenticated, set the thought to the cached thought
     if (user === null) {
       setThought({
@@ -44,9 +46,19 @@ export default function useThought(params: UseThoughtParams) {
       return
     }
 
+    // Get the day to fetch
+    let dayToGet = ""
+
+    // If the day param is undefined, use the QOTD day. Else, use the day param from the URL /day/:day
+    if (dayParam === undefined) {
+      dayToGet = qotd.day
+    } else {
+      dayToGet = dayParam
+    }
+
     // If the user is authenticated, get the user's authentication token and fetch the user's thought for today
     const authorizationToken = await user.getIdToken()
-    const [error, data] = await getThought(authorizationToken, qotd.day)
+    const [error, data] = await getThought(authorizationToken, dayToGet)
 
     // If there is an error, display error message
     if (error !== null) {
@@ -67,7 +79,7 @@ export default function useThought(params: UseThoughtParams) {
       })
       setCachedThought(data.thought)
     }
-  }
+  }, [user, cachedThought, dayParam, qotd.day])
 
   const saveThoughtHelper = useCallback(
     async (currentValue: string) => {
@@ -75,12 +87,21 @@ export default function useThought(params: UseThoughtParams) {
       if (user === null) return
       if (currentValue === thought.previous) return
 
+      let dayToUpdate = ""
+
+      // If the day param is undefined, use the QOTD day. Else, use the day param from the URL /day/:day
+      if (dayParam === undefined) {
+        dayToUpdate = qotd.day
+      } else {
+        dayToUpdate = dayParam
+      }
+
       // Get the user's authentication token and update the thought
       const authorizationToken = await user.getIdToken()
       const [error, _] = await updateThought(
         authorizationToken,
         currentValue,
-        qotd.day
+        dayToUpdate
       )
 
       // If there is an error, display error message
@@ -111,7 +132,7 @@ export default function useThought(params: UseThoughtParams) {
         isSaving: false
       }))
     },
-    [user, qotd, thought]
+    [user, qotd, thought, dayParam]
   )
 
   const debouncedSave = useCallback(_.debounce(saveThoughtHelper, 2500), [
@@ -134,7 +155,7 @@ export default function useThought(params: UseThoughtParams) {
   // Fetch the user's thought for today
   useEffect(() => {
     getThoughtHelper()
-  }, [])
+  }, [dayParam, user])
 
   return {
     thought: {

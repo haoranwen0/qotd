@@ -1,7 +1,6 @@
 import React from "react"
 
 import { signOut } from "firebase/auth"
-import { useNavigate } from "react-router-dom"
 
 import { MenuItem, MenuContent, MenuTrigger, Text } from "@chakra-ui/react"
 import { MdLogout } from "react-icons/md"
@@ -13,8 +12,6 @@ import { auth } from "../../main"
 import useJournal from "../../hooks/useJournal"
 
 const UserMenu: React.FC = () => {
-  const navigate = useNavigate()
-
   const { user } = useAuthContext()
   const { setCachedThought, setCachedQOTD } = useJournal()
 
@@ -31,23 +28,14 @@ const UserMenu: React.FC = () => {
       <MenuContent pos="absolute" top="100%" right="0" mt="xs" boxShadow="none">
         <MenuItem
           value="logout"
-          onClick={() => {
-            signOut(auth)
+          onClick={async () => {
             setCachedThought("")
-            // setCachedQOTD({
-            //   question: "",
-            //   day: "",
-            //   response: "",
-            //   answer_id: ""
-            // })
-
             setCachedQOTD((prevState) => ({
               ...prevState,
               response: "",
               answer_id: ""
             }))
-
-            navigate("/")
+            await signOut(auth)
           }}
           cursor="pointer"
         >
