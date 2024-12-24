@@ -101,7 +101,6 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
       console.error("Error fetching answers:", error)
     } finally {
       setLoading(false)
-      setHasDoneInitialFetch(true)
     }
   }
 
@@ -112,11 +111,14 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
 
   // Fetch initial batch on mount after answer IDs are fetched
   useEffect(() => {
-    if (gotInitialAnswerIds) {
-      if (currentAnswerIndex === 0 && answerIds.length > 0) {
-        loadNextBatch()
+    (async () => {
+      if (gotInitialAnswerIds) {
+        if (currentAnswerIndex === 0 && answerIds.length > 0) {
+          await loadNextBatch()
+        }
+        setHasDoneInitialFetch(true)
       }
-    }
+    })()
   }, [gotInitialAnswerIds, currentAnswerIndex, answerIds])
 
   useEffect(() => {

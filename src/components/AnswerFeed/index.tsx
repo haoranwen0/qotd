@@ -121,21 +121,39 @@ const AnswerFeed: React.FC = () => {
     // Display "Nobody has answered" message
     return (
       <Flex
-        w="full"
+        maxW="md"
         flexDir="column"
-        justifyContent="center"
-        alignItems="center"
         minH="400px"
-        px={4} // Add padding
+        minW={["full", "md"]}
       >
-        <Text
-          fontSize="lg"
-          color="muted"
-          textAlign="center"
-        // Remove whiteSpace="nowrap"
-        >
-          Nobody has answered this question yet. Be the first!
-        </Text>
+        <Box w="full" color="text" h="full" display="flex" flexDir="column"> {/* Added display and flexDir */}
+          {/* Fixed-height header */}
+          <HStack mb={6} justifyContent="space-between">
+            <Heading fontSize="heading.md">No answers yet</Heading>
+            <Button variant="plain" color="muted" className="group">
+              <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Center
+                  transition="transform 350ms ease-in-out"
+                  _groupHover={{ transform: "translateX(-4px)" }}
+                >
+                  <RiArrowLeftLine />
+                </Center>
+                Back to journal
+              </Link>
+            </Button>
+          </HStack>
+
+          {/* Center the "Nobody has answered" message */}
+          <Flex flex={1} justifyContent="center" alignItems="center">
+            <Text
+              fontSize="lg"
+              color="muted"
+              textAlign="center"
+            >
+              Nobody has answered this question yet. Be the first!
+            </Text>
+          </Flex>
+        </Box>
       </Flex>
     )
   }
@@ -149,13 +167,15 @@ const AnswerFeed: React.FC = () => {
             Answer {currentAnswerIndex + 1} of {answerIds.length}
           </Heading>
           <Button variant="plain" color="muted" className="group">
-            <Center
-              transition="transform 350ms ease-in-out"
-              _groupHover={{ transform: "translateX(-4px)" }}
-            >
-              <RiArrowLeftLine />
-            </Center>
-            <Link to="/">Back to journal</Link>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Center
+                transition="transform 350ms ease-in-out"
+                _groupHover={{ transform: "translateX(-4px)" }}
+              >
+                <RiArrowLeftLine />
+              </Center>
+              Back to journal
+            </Link>
           </Button>
         </HStack>
 
