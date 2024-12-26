@@ -58,7 +58,6 @@ const useAuthenticationDialog: UseAuthenticationDialog = () => {
 
   const redirectFormType = useCallback(() => {
     setFormType(formType === "signIn" ? "signUp" : "signIn")
-    resetForm()
   }, [formType])
 
   /**
