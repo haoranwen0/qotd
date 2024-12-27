@@ -128,10 +128,23 @@ const AnswerFeed: React.FC = () => {
       >
         <Box w="full" color="text" h="full" display="flex" flexDir="column"> {/* Added display and flexDir */}
           {/* Fixed-height header */}
-          <HStack mb={6} justifyContent="space-between">
+          <Flex
+            mb={6}
+            flexDir={["column", "row"]}
+            justifyContent="space-between"
+            alignItems={["flex-start", "center"]}
+            gap={4}
+          >
             <Heading fontSize="heading.md">No answers yet</Heading>
-            <Button variant="plain" color="muted" className="group">
-              <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Button variant="plain" color="muted" className="group" px={0}>
+              <Link
+                to="/"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem"
+                }}
+              >
                 <Center
                   transition="transform 350ms ease-in-out"
                   _groupHover={{ transform: "translateX(-4px)" }}
@@ -141,7 +154,7 @@ const AnswerFeed: React.FC = () => {
                 Back to journal
               </Link>
             </Button>
-          </HStack>
+          </Flex>
 
           {/* Center the "Nobody has answered" message */}
           <Flex flex={1} justifyContent="center" alignItems="center">
@@ -162,12 +175,21 @@ const AnswerFeed: React.FC = () => {
     <Flex maxW="md" flexDir="column" minH="400px" minW={["full", "md"]}>
       <Box w="full" color="text" h="full">
         {/* Fixed-height header */}
-        <HStack mb={6} justifyContent="space-between">
+        <Flex
+          mb={6}
+          flexDir={["column", "row"]}
+          justifyContent="space-between"
+          alignItems={["flex-start", "center"]}
+          gap={4}
+        >
           <Heading fontSize="heading.md">
             Answer {currentAnswerIndex + 1} of {answerIds.length}
           </Heading>
-          <Button variant="plain" color="muted" className="group">
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Button variant="plain" color="muted" className="group" px={0}>
+            <Link
+              to="/"
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
               <Center
                 transition="transform 350ms ease-in-out"
                 _groupHover={{ transform: "translateX(-4px)" }}
@@ -177,7 +199,7 @@ const AnswerFeed: React.FC = () => {
               Back to journal
             </Link>
           </Button>
-        </HStack>
+        </Flex>
 
         {/* Content area */}
         <Flex
@@ -221,20 +243,22 @@ const AnswerFeed: React.FC = () => {
           {/* Footer area */}
           <Box position="absolute" top={`${getButtonHeight()}`} w="full">
             {(currentAnswerIndex < answers.length - 1 || hasMore) && (
-              <Button
-                className="group"
-                {...buttonStyle}
-                onClick={showNextAnswer}
-                disabled={loading && currentAnswerIndex === answers.length - 1 || isTransitioning}
-              >
-                Next answer{" "}
-                <Center
-                  transition="transform 350ms ease-in-out"
-                  _groupHover={{ transform: "translateX(4px)" }}
+              <Center>
+                <Button
+                  className="group"
+                  {...buttonStyle}
+                  onClick={showNextAnswer}
+                  disabled={loading && currentAnswerIndex === answers.length - 1 || isTransitioning}
                 >
-                  <RiArrowRightLine />
-                </Center>
-              </Button>
+                  Next answer{" "}
+                  <Center
+                    transition="transform 350ms ease-in-out"
+                    _groupHover={{ transform: "translateX(4px)" }}
+                  >
+                    <RiArrowRightLine />
+                  </Center>
+                </Button>
+              </Center>
             )}
 
             {currentAnswerIndex === answers.length - 1 && !hasMore && (
