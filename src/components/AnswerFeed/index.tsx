@@ -135,11 +135,16 @@ const AnswerFeed: React.FC = () => {
             alignItems={["flex-start", "center"]}
             gap={4}
           >
-            <Heading fontSize="heading.md">
-              No answers yet
-            </Heading>
-            <Button variant="plain" color="muted" className="group" ml={[-5, "inherit"]}>
-              <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Heading fontSize="heading.md">No answers yet</Heading>
+            <Button variant="plain" color="muted" className="group" px={0}>
+              <Link
+                to="/"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem"
+                }}
+              >
                 <Center
                   transition="transform 350ms ease-in-out"
                   _groupHover={{ transform: "translateX(-4px)" }}
@@ -180,8 +185,11 @@ const AnswerFeed: React.FC = () => {
           <Heading fontSize="heading.md">
             Answer {currentAnswerIndex + 1} of {answerIds.length}
           </Heading>
-          <Button variant="plain" color="muted" className="group" ml={[-5, "inherit"]}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Button variant="plain" color="muted" className="group" px={0}>
+            <Link
+              to="/"
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
               <Center
                 transition="transform 350ms ease-in-out"
                 _groupHover={{ transform: "translateX(-4px)" }}
