@@ -1,9 +1,4 @@
-import React, {
-  FormEvent,
-  useCallback,
-  useRef,
-  useState
-} from "react"
+import React, { FormEvent, useCallback, useRef, useState } from "react"
 
 import {
   Box,
@@ -117,11 +112,11 @@ const FeedbackForm: React.FC = () => {
           onClick={() => {
             buttonRef.current?.blur()
           }}
+          zIndex={99}
         >
           <IconButton
             ref={buttonRef}
             aria-label="Feedback"
-            // _hover={{ bgColor: "bg-hover" }}
             bgColor="bg-hover"
             borderRadius="full"
             colorScheme="dark"
