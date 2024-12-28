@@ -111,7 +111,7 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
 
   // Fetch initial batch on mount after answer IDs are fetched
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (gotInitialAnswerIds) {
         if (currentAnswerIndex === 0 && answerIds.length > 0) {
           await loadNextBatch()
@@ -122,10 +122,18 @@ export const useAnswerFeed = (): UseAnswerFeedResults => {
   }, [gotInitialAnswerIds, currentAnswerIndex, answerIds])
 
   useEffect(() => {
-    // Fetch next batch if we're at the second to last answer and there are more answers to fetch
-    if (currentAnswerIndex === answers.length - 2 && hasMore) {
-      loadNextBatch()
-    }
+    ;(async () => {
+      // Fetch next batch if we're at the second to last answer and there are more answers to fetch
+      if (currentAnswerIndex === answers.length - 2 && hasMore) {
+        await loadNextBatch()
+      }
+
+      const scrollContainer = document.getElementById("main-root-container")
+
+      if (scrollContainer) {
+        scrollContainer.scrollTo({ top: 0, behavior: "smooth" })
+      }
+    })()
   }, [currentAnswerIndex])
 
   const showNextAnswer = () => {

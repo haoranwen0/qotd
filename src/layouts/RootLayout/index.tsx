@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Flex } from "@chakra-ui/react"
+import { Box, Flex } from "@chakra-ui/react"
 import { Outlet } from "react-router-dom"
 
 import { Toaster } from "../../components/ui/toaster"
@@ -19,16 +19,22 @@ const RootLayout: React.FC = () => {
   if (loading) return <></>
 
   return (
-    <Flex minH="100dvh" bg="background" p="lg" justifyContent="center">
-      {user !== null && <Calendar />}
-      <BackgroundCurves />
-      <Toaster />
-      <AuthenticationDialogProvider>
-        <Outlet />
-        <AuthenticationControl />
-      </AuthenticationDialogProvider>
-      <FeedbackForm />
-    </Flex>
+    <Box h="100dvh" bg="background" overflow="auto" id="main-root-container">
+      <Flex
+        p={8}
+        justifyContent="center"
+        minH="full"
+      >
+        {user !== null && <Calendar />}
+        <BackgroundCurves />
+        <Toaster />
+        <AuthenticationDialogProvider>
+          <Outlet />
+          <AuthenticationControl />
+        </AuthenticationDialogProvider>
+        <FeedbackForm />
+      </Flex>
+    </Box>
   )
 }
 

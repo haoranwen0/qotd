@@ -192,10 +192,10 @@ const AnswerFeed: React.FC = () => {
 
   return (
     <Flex maxW="md" flexDir="column" minH="400px" minW={["full", "md"]} pb={16}>
-      <Box w="full" color="text" h="full">
+      <Flex w="full" color="text" h="full" flexDir="column" gap={8}>
         {/* Fixed-height header */}
         <Flex
-          mb={6}
+          // mb={6}
           flexDir={["column", "row"]}
           justifyContent="space-between"
           alignItems={["flex-start", "center"]}
@@ -227,7 +227,7 @@ const AnswerFeed: React.FC = () => {
           justifyContent="center"
           position="relative"
           zIndex={1}
-          mt={32}
+          // mt={32}
         >
           {/* Answer content */}
           <Box
@@ -295,7 +295,7 @@ const AnswerFeed: React.FC = () => {
             )}
           </Box>
         </Flex>
-      </Box>
+      </Flex>
     </Flex>
   )
 }
