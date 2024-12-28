@@ -50,11 +50,15 @@ const AnswerFeed: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [displayedAnswer, setDisplayedAnswer] = useState("")
   const [nextAnswer, setNextAnswer] = useState("")
+  const [buttonHeight, setButtonHeight] = useState(96)
 
   const currentAnswer = answers[currentAnswerIndex]
 
   const answerBoxRef = useRef<HTMLDivElement>(null)
-  const getButtonHeight = useCallback(() => Math.max((answerBoxRef.current?.clientHeight || 0) + 8, 96), [answerBoxRef])
+
+  const getButtonHeight = useCallback(() => {
+    return Math.max((answerBoxRef.current?.clientHeight || 0) + 8, 96)
+  }, [answerBoxRef])
 
   useEffect(() => {
     if (currentAnswer) {
@@ -74,10 +78,25 @@ const AnswerFeed: React.FC = () => {
     }
   }, [currentAnswer])
 
+  useEffect(() => {
+    const updateHeight = () => {
+      setButtonHeight(getButtonHeight())
+    }
+
+    updateHeight()
+
+    const resizeObserver = new ResizeObserver(updateHeight)
+    if (answerBoxRef.current) {
+      resizeObserver.observe(answerBoxRef.current)
+    }
+
+    return () => resizeObserver.disconnect()
+  }, [currentAnswer, getButtonHeight])
+
   if (!hasDoneInitialFetch) {
     return (
       <Flex maxW="md" flexDir="column" justifyContent="center" alignItems="center" minH="400px">
-        <Text
+        <Box
           color="text"
           fontSize="lg"
           textAlign="center"
@@ -112,7 +131,7 @@ const AnswerFeed: React.FC = () => {
               animationDelay="0.4s"
             />
           </HStack>
-        </Text>
+        </Box>
       </Flex>
     )
   }
@@ -172,11 +191,11 @@ const AnswerFeed: React.FC = () => {
   }
 
   return (
-    <Flex maxW="md" flexDir="column" minH="400px" minW={["full", "md"]}>
-      <Box w="full" color="text" h="full">
+    <Flex maxW="md" flexDir="column" minH="400px" minW={["full", "md"]} pb={16}>
+      <Flex w="full" color="text" h="full" flexDir="column" gap={8}>
         {/* Fixed-height header */}
         <Flex
-          mb={6}
+          // mb={6}
           flexDir={["column", "row"]}
           justifyContent="space-between"
           alignItems={["flex-start", "center"]}
@@ -208,7 +227,7 @@ const AnswerFeed: React.FC = () => {
           justifyContent="center"
           position="relative"
           zIndex={1}
-          mt={32}
+          // mt={32}
         >
           {/* Answer content */}
           <Box
@@ -241,7 +260,7 @@ const AnswerFeed: React.FC = () => {
           </Box>
 
           {/* Footer area */}
-          <Box position="absolute" top={`${getButtonHeight()}`} w="full">
+          <Box position="absolute" top={`${buttonHeight}px`} w="full">
             {(currentAnswerIndex < answers.length - 1 || hasMore) && (
               <Center>
                 <Button
@@ -276,7 +295,7 @@ const AnswerFeed: React.FC = () => {
             )}
           </Box>
         </Flex>
-      </Box>
+      </Flex>
     </Flex>
   )
 }

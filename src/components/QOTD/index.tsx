@@ -38,7 +38,7 @@ const QOTD: React.FC = () => {
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <Flex maxW="md" flexDir="column">
+    <Flex maxW="md" flexDir="column" justifyContent="center">
       {!qotd.loading && (
         <Box w="full" color="text" h="full">
           <Heading fontSize="heading.md" textAlign={["left", "left", "center"]}>{qotd.currentDate}</Heading>
