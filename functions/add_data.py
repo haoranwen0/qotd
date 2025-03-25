@@ -28,29 +28,53 @@ def is_emulator_running(host, port):
     except (socket.error, socket.timeout):
         return False  # Connection failed
 
-emulator_host = "127.0.0.1"
-emulator_port = 8080
-if is_emulator_running(emulator_host, emulator_port):
-    # Set the environment variable to connect to the emulator
-    os.environ["FIRESTORE_EMULATOR_HOST"] = "127.0.0.1:8080"
+# emulator_host = "127.0.0.1"
+# emulator_port = 8080
+# if is_emulator_running(emulator_host, emulator_port):
+#     # Set the environment variable to connect to the emulator
+#     os.environ["FIRESTORE_EMULATOR_HOST"] = "127.0.0.1:8080"
+
+# print(">> FIRESTORE_EMULATOR_HOST:")
+# print(os.environ["FIRESTORE_EMULATOR_HOST"])
 
 # # Initialize Firebase Admin SDK
 # # cred = credentials.ApplicationDefault()
 cred = credentials.Certificate(
-    "secrets/qotd-ed903-firebase-adminsdk-egyxa-4abe1f461a.json"
+    "secrets/qotd-ed903-firebase-adminsdk-egyxa-54222ccd22.json"
 )
 initialize_app(cred)
 
 db = firestore.client()
 
+def get_questions(prompts_file_path: str) -> dict[str, str]:
+    questions = {}
+    current_date = date.today()
+    with open(prompts_file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            prompt = line.strip()
+            if prompt:
+                questions[current_date.isoformat()] = prompt
+                current_date += timedelta(days=1)
 
-questions = {
-    "2024-12-14": "What is the capital of France?",
-    "2024-12-15": "What is the capital of Germany?",
-    "2024-12-16": "What is the capital of Italy?",
-    "2024-12-17": "What is the capital of Spain?",
-}
-for day, question in questions.items():
-    question_doc_ref = db.collection("questions").document(day)
-    question_doc_ref.set({"question": question})
+    return questions
+
+def add_questions(questions: dict[str, str]) -> None:
+    try:
+        print(">> Preparing to add questions...")
+        for day, question in questions.items():
+            question_doc_ref = db.collection("questions").document(day)
+            doc = question_doc_ref.get()
+            if not doc.exists:
+                question_doc_ref.set({ "question": question, "day": day })
+            else:
+                print(f">> Question for {day} already exists")
+    except Exception as e:
+        print(">> Error adding questions:")
+        print(e)
+    else:
+        print(">> Questions processed successfully!")
+
+if __name__ == "__main__":
+    questions = get_questions("./prompts/journal_prompts.txt")
+    add_questions(questions)
 
