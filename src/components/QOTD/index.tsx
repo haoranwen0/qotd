@@ -1,22 +1,22 @@
 import React, { useRef } from "react"
 
-import { Toggle } from "../ui/toggle"
 import {
-  Flex,
   Box,
-  Heading,
   Button,
   ButtonProps,
   Center,
-  VStack,
+  Flex,
+  Heading,
   HStack,
-  Text
+  Text,
+  VStack
 } from "@chakra-ui/react"
 import { RiArrowRightLine } from "react-icons/ri"
+import { Toggle } from "../ui/toggle"
 
 import { QuestionInput } from ".."
-import { useQOTD } from "./hook"
 import Thought from "../Thought"
+import { useQOTD } from "./hook"
 
 const buttonStyle: ButtonProps = {
   variant: "plain",
@@ -85,11 +85,7 @@ const QOTD: React.FC = () => {
                         }}
                       />
                       <Text fontSize="sm" color="muted">
-                        (
-                        {qotd.isPublic
-                          ? "Share anonymously with the world"
-                          : "Keep it private"}
-                        )
+                        Check to share anonymously with the world
                       </Text>
                     </HStack>
                     <Button
